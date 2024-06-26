@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import './styles.css';
 
+import TableContentContainer from './assets/components/tableContentContainer';
+import SideBarComponent from './assets/components/sideBarComponent';
+
 function App() {
   const [selectedTable, setSelectedTable] = useState('Policies');
 
   return (
     <div className="dashboard">
-      <Sidebar />
+      <SideBarComponent />
       <MainContent selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
     </div>
   );
@@ -18,9 +21,9 @@ function Sidebar() {
       <h1>Life Insurance</h1>
       <nav>
         <ul>
-          <li><a href="#">Dashboard</a></li>
-          <li><a href="#">Tax Management</a></li>
-          <li><a href="#">Stock Exchange</a></li>
+          <li className='navButton'><a href="#">Dashboard</a></li>
+          <li className='navButton'><a href="#">Tax Management</a></li>
+          <li className='navButton'><a href="#">Stock Exchange</a></li>
         </ul>
       </nav>
     </div>
@@ -32,7 +35,8 @@ function MainContent({ selectedTable, setSelectedTable }) {
     <div className="main-content">
       <Header />
       <TableButtons selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
-      <TableDisplay selectedTable={selectedTable} />
+      {/*<TableDisplay selectedTable={selectedTable} />*/}
+      <TableContentContainer/>
     </div>
   );
 }
@@ -52,21 +56,21 @@ function TableButtons({ selectedTable, setSelectedTable }) {
       <TableButtonsBox
         title="Policies"
         value="700"
-        color="#4da6ff"
+        color="#9E092A"
         active={selectedTable === 'Policies'}
         onClick={() => setSelectedTable('Policies')}
       />
       <TableButtonsBox
         title="Paid Out"
         value="230"
-        color="#4da6ff"
+        color="#7DD0F3"
         active={selectedTable === 'Paid Out'}
         onClick={() => setSelectedTable('Paid Out')}
       />
       <TableButtonsBox
         title="Payment History"
         value="1000"
-        color="#4da6ff"
+        color="#9E092A"
         active={selectedTable === 'Payment History'}
         onClick={() => setSelectedTable('Payment History')}
       />
@@ -81,8 +85,8 @@ function TableButtonsBox({ title, value, color, active, onClick }) {
       style={{ borderColor: color }}
       onClick={onClick}
     >
-      <h3>{title}</h3>
-      <p>{value}</p>
+      <p>{title}</p>
+      <h3>{value}</h3>
     </div>
   );
 }
