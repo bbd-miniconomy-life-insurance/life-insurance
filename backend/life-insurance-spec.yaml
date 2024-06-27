@@ -1,0 +1,200 @@
+openapi: 3.0.3
+info:
+  title: Life Insurance`
+  description: Life Insurance`
+  version: 1.0.0
+servers:
+  - url: 'https://api.life.projects.bbdgrad.com'
+paths:
+  /claims:
+    post:
+      summary: Claim Life Insurance
+      description: Pay out life insurance to next of kin for the persona that died. Will also cancel the debit order with Retail Bank
+      requestBody:
+        description: Deceased Persona Details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimRequest'
+      responses:
+        '201':
+          description: Claim Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimSuccess'
+        '400':
+          description: Persona id does not exist, next of kin id does not exist or persona already claimed life insurance.
+        '401':
+          description: Not authorised to access this endpoint.
+        '500':
+          description: Internal server error.
+
+  /policies:
+    post:
+      summary: Activate policy
+      description: Activate life insurance for a persona. Set up a debit order for the client.
+      requestBody:
+        description: Persona Details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyRequest'
+      responses:
+        '201':
+          description: Activation Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivationSuccess'
+        '400':
+          description: Persona id does not exist or persona id already has an active life insurance policy
+        '401':
+          description: Not authorised to access this endpoint.
+        '500':
+          description: Internal server error.
+
+  /policies/prices:
+    post:
+      summary: Add new policy premium price
+      description: Add new policy premium price. This will affect all debit orders for active policies.
+      requestBody:
+        description: Price
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PriceRequest'
+      responses:
+        '201':
+          description: Price Update Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceUpdateSuccess'
+        '400':
+          description: Persona id does not exist or persona id already has an active life insurance policy
+        '401':
+          description: Not authorised to access this endpoint.
+        '500':
+          description: Internal server error.
+
+  /reset:
+    post:
+      summary: Reset the simulation to its base state.
+      description: Removes all data related to the previous simulation and starts a new one with all values and tables set to default.
+      tags:
+        - Simulation
+      responses:
+        '204':
+          description: Life Insurance Successfully Reset.
+        '401':
+          description: Not authorised to access this endpoint.
+        '500':
+          description: Internal server error.
+  /auth:
+    get:
+      summary: Cognito authentication.
+      description: Returns the tokens needed for authorisation.
+      tags:
+        - Authorization
+      parameters:
+        - name: code
+          in: query
+          description: Auth code
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Authentication successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        '400':
+          description: Invalid request parameters.
+        '401':
+          description: Invalid or expired token.
+        '500':
+          description: Internal server error.
+
+
+components:
+  schemas:
+    ClaimRequest:
+      type: object
+      required:
+        - personaId
+        - nextOfKinId
+      properties:
+        personaId:
+          type: string
+          description: The unique identifier for the persona.
+        nextOfKinId:
+          type: string
+          description: The unique identifier for the next of kin (persona).
+    ClaimSuccess:
+      type: object
+      properties:
+        status:
+          type: number
+          description: Response status code
+        message:
+          type: string
+          description: Next of kin was successfully paid by life insurance
+    PolicyRequest:
+      type: object
+      required:
+        - personaId
+      properties:
+        personaId:
+          type: string
+          description: The unique identifier for the persona.
+    ActivationSuccess:
+      type: object
+      properties:
+        status:
+          type: number
+          description: Response status code
+        message:
+          type: string
+          description: Persona successfully activated life insurance
+    PriceRequest:
+      type: object
+      properties:
+        price:
+          type: integer
+          description: The new price for life insurance
+    PriceUpdateSuccess:
+      type: object
+      properties:
+        status:
+          type: number
+          description: Response status code
+        message:
+          type: string
+          description: Policy Price Updated Successfully
+    Auth:
+      type: object
+      properties:
+        status:
+          type: number
+          description: Response status code
+        message:
+          type: string
+          description: Policy Price Updated Successfully
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+              description: Auth access token.
+            idToken:
+              type: string
+              description: Auth identity token.
+            expiresIn:
+              type: integer
+              description: Token expiry date
