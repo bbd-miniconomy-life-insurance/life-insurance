@@ -1,9 +1,6 @@
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
-
 CREATE TABLE "policy_status" (
   "status_id" SERIAL PRIMARY KEY,
-  "statusName" VARCHAR(100) NOT NULL
+  "status_name" VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE "policy" (
@@ -15,7 +12,7 @@ CREATE TABLE "policy" (
 );
 
 CREATE TABLE "payment_history" (
-  "paymentHistoryID" SERIAL PRIMARY KEY,
+  "payment_history_id" SERIAL PRIMARY KEY,
   "policy_id" BIGINT NOT NULL,
   "time" TIMESTAMP NOT NULL,
   "amount" NUMERIC(12,2),
