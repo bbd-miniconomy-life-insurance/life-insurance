@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  # DB
+  postgres:
+    image: postgres:alpine
+    container_name: postgres_db
+    restart: always
+    user: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: miniconomy
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d miniconomy -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://postgres:5432/miniconomy -schemas=public -user=postgres -password=postgres -locations=filesystem:/flyway/sql migrate
+    volumes:
+      - ./database:/flyway/sql
+    depends_on:
+      postgres:
+        condition: service_healthy
