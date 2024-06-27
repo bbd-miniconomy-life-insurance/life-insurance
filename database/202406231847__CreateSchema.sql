@@ -8,7 +8,7 @@ CREATE TABLE "policy_status" (
 
 CREATE TABLE "policy" (
   "policy_id" SERIAL PRIMARY KEY,
-  "persona_id" INT UNIQUE NOT NULL,
+  "persona_id" BIGINT UNIQUE NOT NULL,
   "status_id" INT NOT NULL,
   "inception_date" TIMESTAMP NOT NULL,
   FOREIGN KEY ("status_id") REFERENCES "policy_status" ("status_id")
@@ -16,7 +16,7 @@ CREATE TABLE "policy" (
 
 CREATE TABLE "payment_history" (
   "paymentHistoryID" SERIAL PRIMARY KEY,
-  "policy_id" INT NOT NULL,
+  "policy_id" BIGINT NOT NULL,
   "time" TIMESTAMP NOT NULL,
   "amount" NUMERIC(12,2),
   FOREIGN KEY ("policy_id") REFERENCES "policy" ("policy_id")
