@@ -1,9 +1,13 @@
 package bbd.miniconomy.lifeinsurance.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "policy_status")
+@Getter
+@Setter
 public class PolicyStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "policy_status_id_gen")
@@ -13,21 +17,4 @@ public class PolicyStatus {
 
     @Column(name = "status_name", nullable = false, length = 100)
     private String statusName;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getStatusName() {
-        return statusName;
-    }
-
-    public void setStatusName(String statusName) {
-        this.statusName = statusName;
-    }
-
 }
