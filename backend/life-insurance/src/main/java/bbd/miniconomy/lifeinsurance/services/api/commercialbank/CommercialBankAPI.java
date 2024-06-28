@@ -38,6 +38,10 @@ public class CommercialBankAPI {
                 .collectList()
                 .blockOptional();
 
+        if (transactions.isEmpty()) {
+            return Result.failure("Payment Failed.");
+        }
+
         return transactions
                 .stream()
                 .findFirst()
