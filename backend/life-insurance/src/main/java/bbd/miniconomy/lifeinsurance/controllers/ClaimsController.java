@@ -61,12 +61,13 @@ public class ClaimsController {
         }
 
         Price currentPremium = priceRepository.findFirstByOrderByInceptionDateDesc();
-        double DeathBenefitSum = currentPremium.getPrice() * 30;
+        double deathBenefitSum = currentPremium.getPrice().add(BigDecimal.valueOf(30)).doubleValue();
+
         var transactionResult = commercialBankService
                 .createTransaction(
                         request.getPersonaId(),
                         request.getNextOfKinId(),
-                        DeathBenefitSum
+                        deathBenefitSum
                 );
 
         if (transactionResult.isFailure()) {
