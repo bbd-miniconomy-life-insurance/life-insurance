@@ -9,7 +9,7 @@ DECLARE
 BEGIN
     SELECT "status_id" INTO v_status_id
     FROM "policy_status"
-    WHERE "statusName" = 'Active';
+    WHERE "status_name" = 'Active';
 
     INSERT INTO "policy" ("persona_id", "status_id", "inception_date")
     VALUES (p_persona_id, v_status_id, CURRENT_DATE);

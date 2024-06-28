@@ -1,12 +1,16 @@
 package bbd.miniconomy.lifeinsurance.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
 @Table(name = "payment_history")
+@Getter
+@Setter
 public class PaymentHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_history_id_gen")
@@ -23,37 +27,4 @@ public class PaymentHistory {
 
     @Column(name = "amount", precision = 12, scale = 2)
     private BigDecimal amount;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Policy getPolicy() {
-        return policy;
-    }
-
-    public void setPolicy(Policy policy) {
-        this.policy = policy;
-    }
-
-    public Instant getTime() {
-        return time;
-    }
-
-    public void setTime(Instant time) {
-        this.time = time;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
 }
