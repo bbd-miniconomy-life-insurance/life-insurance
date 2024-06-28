@@ -1,6 +1,8 @@
 package bbd.miniconomy.lifeinsurance.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.LinkedHashSet;
@@ -8,6 +10,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "policy")
+@Getter
+@Setter
 public class Policy {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "policy_id_gen")
@@ -27,45 +31,5 @@ public class Policy {
 
     @OneToMany(mappedBy = "policy")
     private Set<PaymentHistory> paymentHistories = new LinkedHashSet<>();
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Long getPersonaId() {
-        return personaId;
-    }
-
-    public void setPersonaId(Long personaId) {
-        this.personaId = personaId;
-    }
-
-    public PolicyStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PolicyStatus status) {
-        this.status = status;
-    }
-
-    public Instant getInceptionDate() {
-        return inceptionDate;
-    }
-
-    public void setInceptionDate(Instant inceptionDate) {
-        this.inceptionDate = inceptionDate;
-    }
-
-    public Set<PaymentHistory> getPaymentHistories() {
-        return paymentHistories;
-    }
-
-    public void setPaymentHistories(Set<PaymentHistory> paymentHistories) {
-        this.paymentHistories = paymentHistories;
-    }
 
 }
