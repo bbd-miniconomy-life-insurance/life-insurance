@@ -63,13 +63,13 @@ variable "vpc_private_subnets" {
 variable "db_port" {
   type        = number
   description = "The port for the database."
-  default     = 1433
+  default     = 5432
 }
 
 variable "eb_port_web" {
   type        = number
   description = "The port for the eb frontend."
-  default     = 80
+  default     = 3000
 }
 
 variable "backend_certificate" {

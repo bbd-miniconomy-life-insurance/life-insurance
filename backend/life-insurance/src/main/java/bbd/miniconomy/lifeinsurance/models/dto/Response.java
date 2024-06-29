@@ -1,9 +1,13 @@
 package bbd.miniconomy.lifeinsurance.models.dto;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Builder
+@Getter
+@Setter
 public class Response {
-    int status;
-    String message;
+    private int status;
+    private String message;
 }
