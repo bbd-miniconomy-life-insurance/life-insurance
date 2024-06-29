@@ -6,6 +6,7 @@ on:
       - 'deployments'
     paths:
       - 'database/**'
+  workflow_dispatch:
 
 jobs:
   migrate:
