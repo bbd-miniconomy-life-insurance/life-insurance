@@ -170,9 +170,9 @@ resource "aws_elastic_beanstalk_environment" "web_env" {
   }
 
   setting {
-    namespace = "aws:elasticbeanstalk:healthreporting:system"
-    name      = "SystemType"
-    value     = "basic"
+    namespace = "aws:elasticbeanstalk:command"
+    name      = "IgnoreHealthCheck"
+    value     = "true"
   }
 
 #   setting {
