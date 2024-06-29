@@ -170,9 +170,9 @@ resource "aws_elastic_beanstalk_environment" "web_env" {
   }
 
   setting {
-    namespace = "aws:elasticbeanstalk:command"
-    name      = "IgnoreHealthCheck"
-    value     = "true"
+    namespace = "aws:elasticbeanstalk:application"
+    name = "Application Healthcheck URL"
+    value = "/health"
   }
 
 #   setting {
