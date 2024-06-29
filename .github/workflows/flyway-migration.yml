@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Flyway Migrations
         env:
-          FLYWAY_URL: ${{ secrets.DB_CONNECTION_STRING }}
+          FLYWAY_URL: ${{ secrets.AWS_RDS_ENDPOINT }}
           FLYWAY_USER: ${{ secrets.DB_USERNAME }}
           FLYWAY_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
