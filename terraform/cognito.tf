@@ -34,7 +34,7 @@
 #   name         = "life-insurance-client"
 #   user_pool_id = aws_cognito_user_pool.pool.id
 #
-#   callback_urls = ["https://life.projects.bbdgrad.com/login"]
+#   callback_urls = ["https://life.projects.bbdgrad.com/auth"]
 #
 #   generate_secret = true
 #
@@ -48,7 +48,7 @@
 #   name         = "life-insurance-client-local"
 #   user_pool_id = aws_cognito_user_pool.pool.id
 #
-#   callback_urls = ["http://localhost:4200/login"]
+#   callback_urls = ["http:localhost:3000/auth"]
 #
 #   generate_secret = true
 #
@@ -58,7 +58,6 @@
 #   supported_identity_providers         = ["Google"]
 # }
 #
-# # TODO: ASK JOSH
 # data "aws_secretsmanager_secret_version" "google_oauth" {
 #   secret_id = "arn:aws:secretsmanager:eu-west-1:958933916692:secret:google_oauth/client_id_and_secret-hhzgyQ"
 # }

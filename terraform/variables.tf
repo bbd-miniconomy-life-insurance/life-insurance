@@ -72,12 +72,54 @@ variable "eb_port_web" {
   default     = 80
 }
 
-# variable "backend_certificate" {
-#   type        = string
-#   description = "The API number for the SSL certificate."
-# }
+variable "backend_certificate" {
+  type        = string
+  description = "The API number for the SSL certificate."
+}
 
-# variable "frontend_certificate" {
-#   type        = string
-#   description = "The Frontend number for the SSL certificate."
-# }
+variable "frontend_certificate" {
+  type        = string
+  description = "The Frontend number for the SSL certificate."
+}
+
+variable "AWS_RDS_ENDPOINT" {
+  type        = string
+  description = "AWS_RDS_ENDPOINT"
+  sensitive = true
+}
+
+variable "DB_USERNAME" {
+  type        = string
+  description = "DB_USERNAME"
+  sensitive = true
+}
+
+variable "DB_PASSWORD" {
+  type        = string
+  description = "DB_PASSWORD"
+  sensitive = true
+}
+
+variable "AWS_USER_POOL" {
+  type        = string
+  description = "AWS_USER_POOL"
+  sensitive = true
+}
+
+variable "ISSUER_URI" {
+  type        = string
+  description = "ISSUER_URI"
+  sensitive = true
+}
+
+variable "AUDIENCE" {
+  type        = string
+  description = "AUDIENCE"
+  sensitive = true
+}
+
+variable "JWK_SET_URI" {
+  type        = string
+  description = "JWK_SET_URI"
+  sensitive = true
+}
