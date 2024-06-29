@@ -117,7 +117,7 @@ jobs:
 
       - name: Upload artifact to S3
         run: aws s3 cp life-insurance-ui.zip s3://life-insurance-docker-image-1475/life-insurance-ui-${{ github.run_id }}.zip
-        working-directory: src
+        working-directory: frontend
 
       - name: Deploy APP
         run: |
