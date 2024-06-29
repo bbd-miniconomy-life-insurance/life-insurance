@@ -24,7 +24,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(new AntPathRequestMatcher("/health/**"))
+                        .requestMatchers(new AntPathRequestMatcher("/"))
                         .permitAll()
                 )
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests

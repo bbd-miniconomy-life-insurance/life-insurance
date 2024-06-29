@@ -170,9 +170,9 @@ resource "aws_elastic_beanstalk_environment" "web_env" {
   }
 
   setting {
-    namespace = "aws:elasticbeanstalk:application"
-    name = "Application Healthcheck URL"
-    value = "/health"
+    namespace = "aws:elasticbeanstalk:healthreporting:system"
+    name      = "SystemType"
+    value     = "basic"
   }
 
 #   setting {
