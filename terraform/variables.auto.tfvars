@@ -5,9 +5,9 @@ mandatory_tags = {
 
 account_number = "804180393465"
 
-# backend_certificate = "d1865b28-a928-479b-abed-882f0c53a041" - this later
+backend_certificate = "d1865b28-a928-479b-abed-882f0c53a041"
 
-# frontend_certificate = "d1865b28-a928-479b-abed-882f0c53a041" - this later
+frontend_certificate = "5ee45d38-ba76-4c13-a91f-614d4d872345"
 
 repo = "bbd-miniconomy-life-insurance/life-insurance"
 
