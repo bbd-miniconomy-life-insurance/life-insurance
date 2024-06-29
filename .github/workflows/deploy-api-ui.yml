@@ -1,12 +1,12 @@
 name: Deploy API and UI
 
 on:
-  push:
-    branches:
-      - 'main'
-      - 'deployments'
-    paths:
-      - 'database/**'
+#  push:
+#    branches:
+#      - 'main'
+#      - 'deployments'
+#    paths:
+#      - 'database/**'
   workflow_dispatch:
 
 permissions:
