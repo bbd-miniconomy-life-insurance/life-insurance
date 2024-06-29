@@ -121,5 +121,6 @@ jobs:
 
       - name: Deploy APP
         run: |
-          aws elasticbeanstalk create-application-version --application-name life-insurance-web-app --version-label ${{ github.run_id }} --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-ui-${{ github.run_id }}.zip"
-          aws elasticbeanstalk update-environment --application-name life-insurance-web-app --environment-name life-insurance-ui-env --version-label ${{ github.run_id }}
+          version_label="app-$(date +'%Y%m%d%H%M%S')"
+          aws elasticbeanstalk create-application-version --application-name life-insurance-ui-app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-ui-${{ github.run_id }}.zip"
+          aws elasticbeanstalk update-environment --application-name life-insurance-ui-app --environment-name life-insurance-ui-env  --region eu-west-1 --version-label "$version_label"
