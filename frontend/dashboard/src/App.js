@@ -1,54 +1,44 @@
 import React, { useState } from 'react';
 import './styles.css';
 
-import TableContentContainer from './assets/components/tableContentContainer';
-import SideBarComponent from './assets/components/sideBarComponent';
+import { useGlobalState } from './state/GlobalState';
+
+import TableContentContainer from './components/tableContentContainer';
+import SideBarComponent from './components/sideBarComponent';
+import AuthComponent from './components/authComponent';
+import HeaderComponent from './components/headerComponent';
 
 function App() {
   const [selectedTable, setSelectedTable] = useState('Policies');
+  const { globalState, setGlobalState } = useGlobalState();
 
   return (
     <div className="dashboard">
       <SideBarComponent />
-      <MainContent selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
+      <MainContent selectedTable={selectedTable} setSelectedTable={setSelectedTable} authenticated={globalState.isLoggedIn}/>
     </div>
   );
 }
 
-function Sidebar() {
-  return (
-    <div className="sidebar">
-      <h1>Life Insurance</h1>
-      <nav>
-        <ul>
-          <li className='navButton'><a href="#">Dashboard</a></li>
-          <li className='navButton'><a href="#">Tax Management</a></li>
-          <li className='navButton'><a href="#">Stock Exchange</a></li>
-        </ul>
-      </nav>
-    </div>
-  );
-}
 
-function MainContent({ selectedTable, setSelectedTable }) {
+function MainContent({ selectedTable, setSelectedTable,authenticated }) {
   return (
     <div className="main-content">
-      <Header />
-      <TableButtons selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
+      <HeaderComponent/>
+      {authenticated?(
+        <>
+          <TableButtons selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
+          <TableContentContainer/>
+        </>
+      )
+      :<AuthComponent/>}
+      
       {/*<TableDisplay selectedTable={selectedTable} />*/}
-      <TableContentContainer/>
+      
     </div>
   );
 }
 
-function Header() {
-  return (
-    <div className="header">
-      <h2>Hello, user</h2>
-      <button>Sign out</button>
-    </div>
-  );
-}
 
 function TableButtons({ selectedTable, setSelectedTable }) {
   return (
