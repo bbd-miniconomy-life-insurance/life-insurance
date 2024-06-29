@@ -3,11 +3,10 @@ name: Deploy API and UI
 on:
   push:
     branches:
-      - main
+      - 'main'
+      - 'deployments'
     paths:
-      - 'backend/**'
-      - 'frontend/**'
-      - '.github/workflows/deploy-api-ui.yml'
+      - 'database/**'
   workflow_dispatch:
 
 permissions:
