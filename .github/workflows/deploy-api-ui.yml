@@ -112,20 +112,9 @@ jobs:
           role-session-name: GITHUB_ACTION_EBS
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # nameL build files
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: deploy-frontend-session
-          aws-region: ${{secrets.AWS_REGION}}
-
       - name: Package artifact
         run: zip -r life-insurance-ui.zip *
-        working-directory: src
+        working-directory: frontend
 
       - name: Upload artifact to S3
         run: aws s3 cp life-insurance-ui.zip s3://life-insurance-docker-image-1475/life-insurance-ui-${{ github.run_id }}.zip
