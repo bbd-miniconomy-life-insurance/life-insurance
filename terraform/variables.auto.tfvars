@@ -35,7 +35,7 @@ vpc_private_subnets = [
     az         = "eu-west-1b"
 }]
 
-db_port = 1433
+db_port = 5432
 
 eb_port_web = 80
 
