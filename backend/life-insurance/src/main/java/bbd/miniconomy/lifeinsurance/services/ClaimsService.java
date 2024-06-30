@@ -1,18 +1,19 @@
 package bbd.miniconomy.lifeinsurance.services;
 
 import bbd.miniconomy.lifeinsurance.enums.StatusName;
-import bbd.miniconomy.lifeinsurance.models.Result;
-import bbd.miniconomy.lifeinsurance.models.dto.DeathDTO;
-import bbd.miniconomy.lifeinsurance.models.dto.Response;
+import bbd.miniconomy.lifeinsurance.models.dto.lifeevents.LifeEventsDeathDTO;
 import bbd.miniconomy.lifeinsurance.models.entities.Policy;
-import bbd.miniconomy.lifeinsurance.models.entities.PolicyStatus;
 import bbd.miniconomy.lifeinsurance.models.entities.Price;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyStatusRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.TransactionResponse;
-import org.springframework.http.HttpStatus;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequest;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponsePaymentStatus;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequestTransaction;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ClaimsService {
@@ -33,126 +34,46 @@ public class ClaimsService {
         this.policyStatusRepository = policyStatusRepository;
     }
 
-    public Response payClaim(DeathDTO claim) {
+    public void payClaims(List<LifeEventsDeathDTO> claims) {
+        List<LifeEventsDeathDTO> validClaims = claims
+                .stream()
+                .filter(claim -> policyRepository.existsByPersonaId(claim.getDeceased()))
+                .filter(claim -> policyRepository.existsByPersonaIdAndStatus_StatusName_Active(claim.getDeceased()))
+                .toList();
 
-        Result<Policy> deseasedPolicyResult = getValidPolicy(claim);
-        if (deseasedPolicyResult.isFailure()) {
-            return Response.builder()
-                    .status(deseasedPolicyResult.getErrorCode())
-                    .message(deseasedPolicyResult.getErrorMessage())
-                    .build();
-        }
+        List<CreateTransactionRequestTransaction> validTransactions = validClaims
+                .stream()
+                .map(claim -> CreateTransactionRequestTransaction
+                        .builder()
+                        .debitAccountName("life-insurance")
+                        .creditAccountName(claim.getDeceased().toString())
+                        .amount(calculatePayout())
+                        .debitRef("Life insurance pay out for death of " + claim.getDeceased())
+                        .creditRef("Claim for " + claim.getDeceased() + " paid to " + claim.getNextOfKin())
+                        .build()
+                )
+                .toList();
 
-        Result<TransactionResponse> transactionResult = commercialBankService
-                .createTransaction(
-                        claim.getDeceased(),
-                        claim.getNextOfKin(),
-                        calculatePayout()
-                );
+        CreateTransactionResponse response = commercialBankService.createTransactions(new CreateTransactionRequest(validTransactions));
 
-        if (transactionResult.isFailure()) {
-            return Response.builder()
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .message("Could not determine payment status.")
-                    .build();
-        }
-
-        Policy deceasedPolicy = deseasedPolicyResult.getValue();
-        return updatePolicyBasedOnPaymentStatus(transactionResult.getValue(), claim, deceasedPolicy);
-    }
-
-    private Result<Policy> getValidPolicy(DeathDTO claim) {
-        Policy deceasedPolicy = policyRepository.findByPersonaId(claim.getDeceased());
-
-        if (deceasedPolicy == null) {
-            return Result.failure("Policy for deceased persona does not exist.", HttpStatus.BAD_REQUEST.value());
-        }
-
-        switch (deceasedPolicy.getStatus().getStatusName()) {
-            case PaidOut -> {
-                return Result.failure(
-                        "Life Insurance has been paid out already.",
-                        HttpStatus.BAD_REQUEST.value());
-            }
-            case Pending -> {
-                return Result.failure(
-                        "Payment already initiated to next of kin. Waiting on feedback from bank.",
-                        HttpStatus.ACCEPTED.value()
-                );
-            }
-            case Lapsed -> {
-                return Result.failure(
-                        "Debit order was in a lapsed state when persona died. No claim can be made.",
-                        HttpStatus.BAD_REQUEST.value()
-                );
-            }
-            case Active -> {
-                return Result.success(deceasedPolicy);
-            }
-            default -> {
-                // should never happen
-                return Result.failure(
-                        "Could not determine deceased policy status",
-                        HttpStatus.INTERNAL_SERVER_ERROR.value()
-                );
-            }
-        }
-    }
-
-    private Response updatePolicyBasedOnPaymentStatus(TransactionResponse payment, DeathDTO claim, Policy deceasedPolicy) {
-        switch (payment.getStatus()) {
-            case pending -> {
-                Result<Policy> updatedPolicyResult = updatePolicyStatus(deceasedPolicy, StatusName.Pending);
-
-                if (updatedPolicyResult.isFailure()) {
-                    return Response.builder()
-                            .status(updatedPolicyResult.getErrorCode())
-                            .message(updatedPolicyResult.getErrorMessage())
-                            .build();
+        // TODO: Refactor assumption that validClaims and validTransactions are the same length and order
+        for (int i = 0; i < validClaims.size(); i++) {
+            // for each one, update the policy record
+            Policy deceasedPolicy = policyRepository.findByPersonaId(validClaims.get(i).getDeceased());
+            CreateTransactionResponsePaymentStatus transactionStatus = CreateTransactionResponsePaymentStatus.valueOf(response.getData().getItems().get(i).getStatus());
+            switch (transactionStatus) {
+                case pending -> {
+                    deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName(StatusName.Pending));
+                    policyRepository.save(deceasedPolicy);
                 }
-
-                return Response.builder()
-                        .status(HttpStatus.ACCEPTED.value())
-                        .message("Payment has been initiated for next of kin . Waiting on Feedback from Bank.")
-                        .build();
-            }
-
-            case completed -> {
-                Result<Policy> updatedPolicyResult = updatePolicyStatus(deceasedPolicy, StatusName.Active);
-
-                if (updatedPolicyResult.isFailure()) {
-                    return Response.builder()
-                            .status(updatedPolicyResult.getErrorCode())
-                            .message(updatedPolicyResult.getErrorMessage())
-                            .build();
+                case completed -> {
+                    deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName(StatusName.PaidOut));
+                    policyRepository.save(deceasedPolicy);
                 }
-
-                return Response.builder()
-                        .status(HttpStatus.OK.value())
-                        .message("Successfully paid claim to next of kin persona.")
-                        .build();
+                default -> {
+                    // TODO: means the transactionStatus is unknown... do nothing for now.
+                }
             }
-
-            default -> {
-                // null: Why would there ever be no status?
-                return Response.builder()
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                        .message("Could not determine payment status.")
-                        .build();
-            }
-        }
-    }
-
-    private Result<Policy> updatePolicyStatus(Policy deceasedPolicy, StatusName status) {
-        try {
-            PolicyStatus completedStatus = policyStatusRepository.findPolicyStatusByStatusName(status);
-            deceasedPolicy.setStatus(completedStatus);
-            return Result.success(policyRepository.save(deceasedPolicy));
-        } catch (Exception e) {
-            return Result.failure(
-                    "Could not update policy status.",
-                    HttpStatus.INTERNAL_SERVER_ERROR.value()
-            );
         }
     }
 

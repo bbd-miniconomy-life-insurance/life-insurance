@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.util.List;
 public interface PolicyRepository extends JpaRepository<Policy, Long> {
+    boolean existsByPersonaId(Long personaId);
+
+    boolean existsByPersonaIdAndStatus_StatusName_Active(Long personaId);
     Policy findByPersonaId(Long personaId);
 
     @Modifying
@@ -26,4 +29,5 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
 
     @Query("SELECT COUNT(p) FROM Policy p WHERE p.status.statusName = 'Active'")
     long countActivePolicies();
+
 }

@@ -1,8 +1,7 @@
 package bbd.miniconomy.lifeinsurance.controllers;
 
-import bbd.miniconomy.lifeinsurance.models.dto.DeathDTO;
-import bbd.miniconomy.lifeinsurance.models.dto.LifeEventsDTO;
-import bbd.miniconomy.lifeinsurance.models.dto.Response;
+import bbd.miniconomy.lifeinsurance.models.dto.lifeevents.LifeEventsDTO;
+import bbd.miniconomy.lifeinsurance.models.dto.GlobalLifeInsuranceResponse;
 import bbd.miniconomy.lifeinsurance.services.ClaimsService;
 import bbd.miniconomy.lifeinsurance.services.PolicyService;
 import org.springframework.http.HttpStatus;
@@ -26,12 +25,10 @@ public class LifeEventsController {
     }
 
     @PostMapping
-    public Response HandleLifeEvents(LifeEventsDTO lifeEvents) {
+    public GlobalLifeInsuranceResponse HandleLifeEvents(LifeEventsDTO lifeEvents) {
 
         executor.submit(() -> {
-            for (DeathDTO death : lifeEvents.getDeaths()) {
-                claimsService.payClaim(death);
-            }
+            claimsService.payClaims(lifeEvents.getDeaths());
         });
 
         executor.submit(() -> {
@@ -42,7 +39,7 @@ public class LifeEventsController {
         });
 
         // returns immediately
-        return Response.builder()
+        return GlobalLifeInsuranceResponse.builder()
                 .status(HttpStatus.ACCEPTED.value())
                 .message("Message received. Processing...")
                 .build();
