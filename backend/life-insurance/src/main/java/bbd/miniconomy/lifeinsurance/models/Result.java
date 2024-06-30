@@ -4,21 +4,27 @@ import java.util.Optional;
 
 public class Result<T> {
     private final T value;
+    private final int errorCode;
     private final String errorMessage;
     private final boolean isSuccess;
 
-    private Result(T value, String errorMessage, boolean isSuccess) {
+    private Result(T value, String errorMessage, boolean isSuccess, int errorCode) {
         this.value = value;
         this.errorMessage = errorMessage;
         this.isSuccess = isSuccess;
+        this.errorCode = errorCode;
     }
 
     public static <T> Result<T> success(T value) {
-        return new Result<>(value, null, true);
+        return new Result<>(value, null, true, 200);
     }
 
     public static <T> Result<T> failure(String errorMessage) {
-        return new Result<>(null, errorMessage, false);
+        return new Result<>(null, errorMessage, false, 500);
+    }
+
+    public static <T> Result<T> failure(String errorMessage, int errorCode) {
+        return new Result<>(null, errorMessage, false, errorCode);
     }
 
     public boolean isSuccess() {
@@ -41,6 +47,13 @@ public class Result<T> {
             throw new IllegalStateException("No error message available for successful result");
         }
         return errorMessage;
+    }
+
+    public int getErrorCode() {
+        if (isSuccess) {
+            throw new IllegalStateException("No error message available for successful result");
+        }
+        return errorCode;
     }
 
     public Optional<T> getValueOptional() {

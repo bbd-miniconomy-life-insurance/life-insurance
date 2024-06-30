@@ -17,7 +17,7 @@ public class Policy {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "policy_id_gen")
     @SequenceGenerator(name = "policy_id_gen", sequenceName = "policy_policy_id_seq", allocationSize = 1)
     @Column(name = "policy_id", nullable = false)
-    private Integer id;
+        private Integer id;
 
     @Column(name = "persona_id", nullable = false)
     private Long personaId;
