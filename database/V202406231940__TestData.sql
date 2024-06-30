@@ -1,6 +1,7 @@
 INSERT INTO "policy_status" ("status_name") VALUES
 ('Active'),
 ('PaidOut'),
+('Pending'),
 ('Lapsed');
 
 INSERT INTO "policy" ("persona_id", "status_id", "inception_date") VALUES
@@ -20,5 +21,5 @@ INSERT INTO "payment_history" ("policy_id", "time", "amount") VALUES
 ((SELECT "policy_id" FROM "policy" WHERE "persona_id" = 3), '2023-03-28', 80.00);
 
 INSERT INTO "price" ("inception_date", "price") VALUES
-('2023-01-01', 500.00),
-('2023-02-01', 600.00);
+('2023-01-01', 500),
+('2023-02-01', 600);

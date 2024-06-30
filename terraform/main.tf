@@ -95,6 +95,7 @@ resource "aws_db_instance" "db" {
   copy_tags_to_snapshot       = true
   db_subnet_group_name        = aws_db_subnet_group.db_subnet_group.name
   skip_final_snapshot         = true
+  db_name                     = "miniconomy"
 
   vpc_security_group_ids = [
     aws_security_group.db_security_group.id
@@ -111,7 +112,7 @@ resource "aws_elastic_beanstalk_application" "web_app" {
 resource "aws_elastic_beanstalk_environment" "web_env" {
   name                = "${var.project_name}-web-env"
   application         = aws_elastic_beanstalk_application.web_app.name
-  solution_stack_name = "64bit Amazon Linux 2023 v4.3.3 running Docker"
+  solution_stack_name = "64bit Amazon Linux 2023 v4.2.5 running Corretto 21"
   cname_prefix        = "${var.project_name}-web"
 
   setting {
@@ -134,11 +135,7 @@ resource "aws_elastic_beanstalk_environment" "web_env" {
     name      = "InstanceTypes"
     value     = "t3.micro"
   }
-  # setting {
-  #   namespace = "aws:ec2:vpc"
-  #   name      = "AssociatePublicIpAddress"
-  #   value     = true
-  # }
+
   setting {
     namespace = "aws:autoscaling:asg"
     name      = "MaxSize"
@@ -178,17 +175,17 @@ resource "aws_elastic_beanstalk_environment" "web_env" {
     value     = "basic"
   }
 
-  # setting {
-  #   namespace = "aws:elbv2:listener:443"
-  #   name      = "Protocol"
-  #   value     = "HTTPS"
-  # }
-
-  # setting {
-  #   namespace = "aws:elbv2:listener:443"
-  #   name      = "ListenerEnabled"
-  #   value     = "true"
-  # }
+#   setting {
+#     namespace = "aws:elbv2:listener:443"
+#     name      = "Protocol"
+#     value     = "HTTPS"
+#   }
+#
+#   setting {
+#     namespace = "aws:elbv2:listener:443"
+#     name      = "ListenerEnabled"
+#     value     = "true"
+#   }
 
   setting {
     namespace = "aws:elbv2:listener:80"
@@ -214,12 +211,53 @@ resource "aws_elastic_beanstalk_environment" "web_env" {
     value     = aws_security_group.eb_security_group_lb.id
   }
 
-  # setting {
-  #   namespace = "aws:elbv2:listener:443"
-  #   name      = "SSLCertificateArns"
-  #   value     = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041" # Replace with your SSL certificate ARN
-  # }
+#   setting {
+#     namespace = "aws:elbv2:listener:443"
+#     name      = "SSLCertificateArns"
+#     value     = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041" # Replace with your SSL certificate ARN
+#   }
 
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "AWS_RDS_ENDPOINT"
+    value     = var.AWS_RDS_ENDPOINT
+  }
+
+  setting {
+    namespace   = "aws:elasticbeanstalk:application:environment"
+    name        = "DB_USERNAME"
+    value       = var.DB_USERNAME
+  }
+
+  setting {
+    namespace   = "aws:elasticbeanstalk:application:environment"
+    name        = "DB_PASSWORD"
+    value       = var.DB_PASSWORD
+  }
+
+  setting {
+    namespace   = "aws:elasticbeanstalk:application:environment"
+    name        = "AWS_USER_POOL"
+    value       = var.AWS_USER_POOL
+  }
+
+  setting {
+    namespace   = "aws:elasticbeanstalk:application:environment"
+    name        = "ISSUER_URI"
+    value       = var.ISSUER_URI
+  }
+
+  setting {
+    namespace   = "aws:elasticbeanstalk:application:environment"
+    name        = "AUDIENCE"
+    value       = var.AUDIENCE
+  }
+
+  setting {
+    namespace   = "aws:elasticbeanstalk:application:environment"
+    name        = "JWK_SET_URI"
+    value       = var.JWK_SET_URI
+  }
 }
 
 # FRONTEND
@@ -231,7 +269,7 @@ resource "aws_elastic_beanstalk_application" "ui_app" {
 resource "aws_elastic_beanstalk_environment" "ui_env" {
   name                = "${var.project_name}-ui-env"
   application         = aws_elastic_beanstalk_application.ui_app.name
-  solution_stack_name = "64bit Amazon Linux 2023 v4.3.3 running Docker"
+  solution_stack_name = "64bit Amazon Linux 2023 v6.1.4 running Node.js 20"
   cname_prefix        = "${var.project_name}-ui"
 
   setting {
@@ -254,11 +292,7 @@ resource "aws_elastic_beanstalk_environment" "ui_env" {
     name      = "InstanceTypes"
     value     = "t3.micro"
   }
-  # setting {
-  #   namespace = "aws:ec2:vpc"
-  #   name      = "AssociatePublicIpAddress"
-  #   value     = true
-  # }
+
   setting {
     namespace = "aws:autoscaling:asg"
     name      = "MaxSize"
@@ -298,17 +332,17 @@ resource "aws_elastic_beanstalk_environment" "ui_env" {
     value     = "basic"
   }
 
-  # setting {
-  #   namespace = "aws:elbv2:listener:443"
-  #   name      = "Protocol"
-  #   value     = "HTTPS"
-  # }
-
-  # setting {
-  #   namespace = "aws:elbv2:listener:443"
-  #   name      = "ListenerEnabled"
-  #   value     = "true"
-  # }
+#   setting {
+#     namespace = "aws:elbv2:listener:443"
+#     name      = "Protocol"
+#     value     = "HTTPS"
+#   }
+#
+#   setting {
+#     namespace = "aws:elbv2:listener:443"
+#     name      = "ListenerEnabled"
+#     value     = "true"
+#   }
 
   setting {
     namespace = "aws:elbv2:listener:80"
@@ -334,11 +368,11 @@ resource "aws_elastic_beanstalk_environment" "ui_env" {
     value     = aws_security_group.eb_security_group_lb.id
   }
 
-  # setting {
-  #   namespace = "aws:elbv2:listener:443"
-  #   name      = "SSLCertificateArns"
-  #   value     = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041" # Replace with your SSL certificate ARN
-  # }
+#   setting {
+#     namespace = "aws:elbv2:listener:443"
+#     name      = "SSLCertificateArns"
+#     value     = "arn:aws:acm:eu-west-1:804180393465:certificate/5ee45d38-ba76-4c13-a91f-614d4d872345" # Replace with your SSL certificate ARN
+#   }
 
 }
 

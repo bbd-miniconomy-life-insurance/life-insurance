@@ -22,6 +22,6 @@ CREATE TABLE "payment_history" (
 CREATE TABLE "price" (
   "price_id" SERIAL PRIMARY KEY,
   "inception_date" TIMESTAMP NOT NULL,
-  "price" NUMERIC(12,2) NOT NULL
+  "price" BIGINT NOT NULL
 );
 

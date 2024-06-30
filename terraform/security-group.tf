@@ -120,23 +120,23 @@ resource "aws_security_group" "eb_security_group_lb" {
 }
 
 
-# # Security group for the load balancer
-# resource "aws_security_group" "lb_sg" {
-#   vpc_id      = aws_vpc.vpc.id
-#   name        = "${var.project_name}-security-group-lb"
-#   description = "Allow HTTPS inbound traffic"
+# Security group for the load balancer
+resource "aws_security_group" "lb_sg" {
+  vpc_id      = aws_vpc.vpc.id
+  name        = "${var.project_name}-security-group-lb"
+  description = "Allow HTTPS inbound traffic"
 
-#   ingress {
-#     from_port   = 443
-#     to_port     = 443
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-# }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}

@@ -1,5 +1,7 @@
 package bbd.miniconomy.lifeinsurance.controllers;
 
+import bbd.miniconomy.lifeinsurance.enums.StatusName;
+import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.models.dto.ClaimRequestDTO;
 import bbd.miniconomy.lifeinsurance.models.dto.Response;
 import bbd.miniconomy.lifeinsurance.models.entities.Policy;
@@ -7,17 +9,14 @@ import bbd.miniconomy.lifeinsurance.models.entities.Price;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
 import bbd.miniconomy.lifeinsurance.services.CommercialBankService;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.TransactionResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.math.BigDecimal;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/claims")
@@ -39,6 +38,7 @@ public class ClaimsController {
 
     @PostMapping
     public ResponseEntity<Response> payClaim(@RequestBody @Valid ClaimRequestDTO request) {
+        // Validate that policy exists
         Policy deceasedPolicy = policyRepository.findByPersonaId(request.getPersonaId());
         if (deceasedPolicy == null) {
             return new ResponseEntity<>(
@@ -50,7 +50,8 @@ public class ClaimsController {
             );
         }
 
-        if (deceasedPolicy.getStatus().getStatusName().equals("PaidOut")) {
+        // Validate policy paid out status
+        if (StatusName.PaidOut.equals(deceasedPolicy.getStatus().getStatusName())) {
             return new ResponseEntity<>(
                     Response.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
@@ -60,29 +61,84 @@ public class ClaimsController {
             );
         }
 
-        Price currentPremium = priceRepository.findFirstByOrderByInceptionDateDesc();
-        double deathBenefitSum = currentPremium.getPrice().add(BigDecimal.valueOf(30)).doubleValue();
+        if (StatusName.Pending.equals(deceasedPolicy.getStatus().getStatusName())) {
+            return new ResponseEntity<>(
+                    Response.builder()
+                            .status(HttpStatus.ACCEPTED.value())
+                            .message("Payment has already been initiated for next of kin persona " + request.getNextOfKinId() + ". Waiting on Feedback from Bank.")
+                            .build(),
+                    HttpStatus.ACCEPTED
+            );
+        }
 
-        var transactionResult = commercialBankService
+        if (StatusName.Lapsed.equals(deceasedPolicy.getStatus().getStatusName())) {
+            return new ResponseEntity<>(
+                    Response.builder()
+                            .status(HttpStatus.OK.value())
+                            .message(request.getPersonaId() + "'s life insurance debit order was in lapsed state for the month. No pay out will be made to " + request.getNextOfKinId())
+                            .build(),
+                    HttpStatus.OK
+            );
+        }
+
+
+        // calculate payout.
+        Price currentPremium = priceRepository.findFirstByOrderByInceptionDateDesc();
+        Long deathBenefitSum = currentPremium.getPrice() * 30;
+
+        // pay next of kin
+        Result<TransactionResponse> transactionResult = commercialBankService
                 .createTransaction(
                         request.getPersonaId(),
                         request.getNextOfKinId(),
                         deathBenefitSum
                 );
 
+        // would probably never happen: commercial response was empty or has no first record
         if (transactionResult.isFailure()) {
-            // should technically never be?
-            // How will we have any clue what happened to the payment?
-            // if our accounts were too low to pay out - buy stocks, try again.
-            // Return response of bank if something went wrong (or just say they don't have an account)
+            return new ResponseEntity<>(
+                    Response.builder()
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                            .message("Could not determine payment status.")
+                            .build(),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
 
-       return new ResponseEntity<>(
-                Response.builder()
-                        .status(HttpStatus.OK.value())
-                        .message("Successfully paid Death Benefit of " + request.getPersonaId() + " to " + request.getNextOfKinId() + "(next of kin).")
-                        .build(),
-                HttpStatus.OK
-        );
+        TransactionResponse payment = transactionResult.getValue();
+
+        // react to payment request status
+        switch (payment.getStatus()) {
+            case pending -> {
+                return new ResponseEntity<>(
+                        Response.builder()
+                                .status(HttpStatus.ACCEPTED.value())
+                                .message("Payment has been initiated for next of kin persona " + request.getNextOfKinId() + ". Waiting on Feedback from Bank.")
+                                .build(),
+                        HttpStatus.ACCEPTED
+                );
+            }
+
+            case completed -> {
+                return new ResponseEntity<>(
+                        Response.builder()
+                                .status(HttpStatus.OK.value())
+                                .message("Successfully paid Death Benefit of " + request.getPersonaId() + " to " + request.getNextOfKinId() + "(next of kin).")
+                                .build(),
+                        HttpStatus.OK
+                );
+            }
+
+            default -> {
+                // null: Why would there ever be no status?
+                return new ResponseEntity<>(
+                        Response.builder()
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                                .message("Could not determine payment status.")
+                                .build(),
+                        HttpStatus.INTERNAL_SERVER_ERROR
+                );
+            }
+        }
     }
 }
