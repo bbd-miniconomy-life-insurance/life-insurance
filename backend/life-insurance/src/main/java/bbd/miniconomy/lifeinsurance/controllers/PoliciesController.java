@@ -6,14 +6,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
 
 @RestController
 @RequestMapping("/policies")
 public class PoliciesController {
 
-    @PostMapping
-    public void ActivatePolicy(@RequestBody PolicyRequestDTO request) {
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+    private final PolicyRepository policyRepository;
+
+    public PoliciesController(
+            PolicyRepository policyRepository
+    ) {
+        this.policyRepository = policyRepository;
     }
 
     @PostMapping("/prices")
