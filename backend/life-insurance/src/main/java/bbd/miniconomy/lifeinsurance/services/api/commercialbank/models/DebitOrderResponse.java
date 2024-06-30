@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TransactionResponse {
+public class DebitOrderResponse {
         private String debitOrderId;
         private String creditAccountName;
         private String debitAccountName;
