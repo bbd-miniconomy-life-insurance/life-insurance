@@ -15,7 +15,7 @@ public class CommercialBankService {
         this.communicationLayer = apiLayer;
     }
 
-    public Result<TransactionResponse> createTransaction(Long deceasedPersonaId, Long nextOfKinPersonaId, double amount) {
+    public Result<TransactionResponse> createTransaction(Long deceasedPersonaId, Long nextOfKinPersonaId, Long amount) {
         // build request
         TransactionRequest claimRequest = TransactionRequest
                 .builder()

@@ -1,5 +1,6 @@
 package bbd.miniconomy.lifeinsurance.models.entities;
 
+import bbd.miniconomy.lifeinsurance.enums.StatusName;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +17,5 @@ public class PolicyStatus {
     private Integer id;
 
     @Column(name = "status_name", nullable = false, length = 100)
-    private String statusName;
+    private StatusName statusName;
 }

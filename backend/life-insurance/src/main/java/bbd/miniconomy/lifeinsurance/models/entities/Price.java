@@ -22,5 +22,5 @@ public class Price {
     private Instant inceptionDate;
 
     @Column(name = "price", nullable = false, precision = 12, scale = 2)
-    private BigDecimal price;
+    private Long price;
 }

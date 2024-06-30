@@ -10,9 +10,9 @@ import lombok.Setter;
 @Builder
 public class TransactionRequest {
     private String debitAccountName;
-    private double transactionAmount;
+    private final String creditAccountName = CommercialBankAPI.BANK_ACCOUNT_NUMBER;
+    private Long transactionAmount;
     private String debitRef;
     private String creditRef;
-    private final String creditAccountName = CommercialBankAPI.BANK_ACCOUNT_NUMBER;
 }
 
