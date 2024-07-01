@@ -101,12 +101,12 @@ resource "aws_security_group" "eb_security_group_lb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # ingress {
-  #   from_port   = 443
-  #   to_port     = 443
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   # Define outbound rules to allow the EC2 instance to communicate with the RDS database
   egress {
