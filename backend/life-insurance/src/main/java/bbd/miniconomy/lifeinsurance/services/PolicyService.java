@@ -1,4 +1,7 @@
-import org.springframework.beans.factory.annotation.Autowired;
+package bbd.miniconomy.lifeinsurance.services;
+
+import bbd.miniconomy.lifeinsurance.models.dto.PolicyInsertDTO;
+import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,13 +11,16 @@ import java.util.List;
 @Service
 public class PolicyService {
 
-    @Autowired
-    private PolicyRepository policyRepository;
+    private final PolicyRepository policyRepository;
+
+    public PolicyService(PolicyRepository policyRepository) {
+        this.policyRepository = policyRepository;
+    }
 
     @Transactional
     public void activatePolicy(Long personaId, Date inceptionDate) {
         PolicyInsertDTO policyInsertDTO = new PolicyInsertDTO(personaId, inceptionDate);
-        policyRepository.insertPolicy(policyInsertDTO.getPersonaId().intValue(), policyInsertDTO.getInceptionDate());
+        policyRepository.insertPolicy(policyInsertDTO.getPersonaId(), policyInsertDTO.getInceptionDate());
     }
 
     @Transactional

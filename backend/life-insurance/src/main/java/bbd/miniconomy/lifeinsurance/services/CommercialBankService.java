@@ -2,11 +2,9 @@ package bbd.miniconomy.lifeinsurance.services;
 
 import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.services.api.APILayer;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.TransactionRequest;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.TransactionResponse;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequest;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.DebitOrderRequest;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.DebitOrderResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,24 +17,14 @@ public class CommercialBankService {
         this.communicationLayer = apiLayer;
     }
 
-    public Result<TransactionResponse> createTransaction(Long deceasedPersonaId, Long nextOfKinPersonaId, double amount) {
-        // build request
-        TransactionRequest claimRequest = TransactionRequest
-                .builder()
-                .debitAccountName(nextOfKinPersonaId.toString())
-                .transactionAmount(amount)
-                .debitRef("Life Insurance Payout from " + deceasedPersonaId + " to " + nextOfKinPersonaId)
-                .creditRef("Claim for " + deceasedPersonaId)
-                .build();
-
-        // send request
+    public Result<CreateTransactionResponse> createTransactions(CreateTransactionRequest transactions) {
         return communicationLayer
                 .getCommercialBankAPI()
-                .createTransaction(claimRequest);
+                .createTransactions(transactions);
     }
 
     // Is personaId correct as the accountName?
-    public Result<TransactionResponse> createDebitOrder(Long personaId, double amount) {
+    public Result<CreateTransactionResponse> createDebitOrder(Long personaId, double amount) {
         // build request
         DebitOrderRequest claimRequest = DebitOrderRequest
                 .builder()
@@ -52,8 +40,8 @@ public class CommercialBankService {
                 .createDebitOrder(claimRequest);
     }
 
-    public Result<TransactionResponse> createDebitOrders(List<Long> personaIds, double amount) {
-        List<Result<TransactionResponse>> results = personaIds.stream()
+    public Result<CreateTransactionResponse> createDebitOrders(List<Long> personaIds, double amount) {
+        List<Result<CreateTransactionResponse>> results = personaIds.stream()
             .map(personaId -> {
                 // build requests
                 DebitOrderRequest claimRequest = DebitOrderRequest
@@ -71,6 +59,7 @@ public class CommercialBankService {
             })
             .collect(Collectors.toList());
 
-        return results;
+        return null;
+//        return results;
     }
 }
