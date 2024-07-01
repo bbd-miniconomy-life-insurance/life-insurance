@@ -28,6 +28,10 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers(new AntPathRequestMatcher("/life-events"))
+                        .permitAll()
+                )
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

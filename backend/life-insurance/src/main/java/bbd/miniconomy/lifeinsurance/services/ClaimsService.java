@@ -1,6 +1,7 @@
 package bbd.miniconomy.lifeinsurance.services;
 
 import bbd.miniconomy.lifeinsurance.enums.StatusName;
+import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.models.dto.lifeevents.LifeEventsDeathDTO;
 import bbd.miniconomy.lifeinsurance.models.entities.Policy;
 import bbd.miniconomy.lifeinsurance.models.entities.Price;
@@ -38,7 +39,7 @@ public class ClaimsService {
         List<LifeEventsDeathDTO> validClaims = claims
                 .stream()
                 .filter(claim -> policyRepository.existsByPersonaId(claim.getDeceased()))
-                .filter(claim -> policyRepository.existsByPersonaIdAndStatus_StatusName_Active(claim.getDeceased()))
+                .filter(claim -> policyRepository.existsByPersonaIdAndStatus_StatusName(claim.getDeceased(), StatusName.Active))
                 .toList();
 
         List<CreateTransactionRequestTransaction> validTransactions = validClaims
@@ -54,13 +55,24 @@ public class ClaimsService {
                 )
                 .toList();
 
-        CreateTransactionResponse response = commercialBankService.createTransactions(new CreateTransactionRequest(validTransactions));
+        if (validTransactions.isEmpty()) {
+            return;
+        }
+
+        Result<CreateTransactionResponse> transactionsResult = commercialBankService
+                .createTransactions(new CreateTransactionRequest(validTransactions));
+
+        if (transactionsResult.isFailure()) {
+            return;
+        }
+
+        CreateTransactionResponse transactions = transactionsResult.getValue();
 
         // TODO: Refactor assumption that validClaims and validTransactions are the same length and order
         for (int i = 0; i < validClaims.size(); i++) {
             // for each one, update the policy record
             Policy deceasedPolicy = policyRepository.findByPersonaId(validClaims.get(i).getDeceased());
-            CreateTransactionResponsePaymentStatus transactionStatus = CreateTransactionResponsePaymentStatus.valueOf(response.getData().getItems().get(i).getStatus());
+            CreateTransactionResponsePaymentStatus transactionStatus = CreateTransactionResponsePaymentStatus.valueOf(transactions.getData().getItems().get(i).getStatus());
             switch (transactionStatus) {
                 case pending -> {
                     deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName(StatusName.Pending));

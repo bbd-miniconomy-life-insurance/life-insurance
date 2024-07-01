@@ -7,6 +7,7 @@ import bbd.miniconomy.lifeinsurance.services.PolicyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,8 @@ public class LifeEventsController {
     }
 
     @PostMapping
-    public GlobalLifeInsuranceResponse HandleLifeEvents(LifeEventsDTO lifeEvents) {
+    public GlobalLifeInsuranceResponse HandleLifeEvents(
+            @RequestBody LifeEventsDTO lifeEvents) {
 
         executor.submit(() -> {
             claimsService.payClaims(lifeEvents.getDeaths());

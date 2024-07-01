@@ -175,17 +175,17 @@ resource "aws_elastic_beanstalk_environment" "web_env" {
     value     = "basic"
   }
 
-#   setting {
-#     namespace = "aws:elbv2:listener:443"
-#     name      = "Protocol"
-#     value     = "HTTPS"
-#   }
-#
-#   setting {
-#     namespace = "aws:elbv2:listener:443"
-#     name      = "ListenerEnabled"
-#     value     = "true"
-#   }
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "Protocol"
+    value     = "HTTPS"
+  }
+
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "ListenerEnabled"
+    value     = "true"
+  }
 
   setting {
     namespace = "aws:elbv2:listener:80"
@@ -211,11 +211,11 @@ resource "aws_elastic_beanstalk_environment" "web_env" {
     value     = aws_security_group.eb_security_group_lb.id
   }
 
-#   setting {
-#     namespace = "aws:elbv2:listener:443"
-#     name      = "SSLCertificateArns"
-#     value     = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041" # Replace with your SSL certificate ARN
-#   }
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "SSLCertificateArns"
+    value     = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041" # Replace with your SSL certificate ARN
+  }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
@@ -332,17 +332,17 @@ resource "aws_elastic_beanstalk_environment" "ui_env" {
     value     = "basic"
   }
 
-#   setting {
-#     namespace = "aws:elbv2:listener:443"
-#     name      = "Protocol"
-#     value     = "HTTPS"
-#   }
-#
-#   setting {
-#     namespace = "aws:elbv2:listener:443"
-#     name      = "ListenerEnabled"
-#     value     = "true"
-#   }
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "Protocol"
+    value     = "HTTPS"
+  }
+
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "ListenerEnabled"
+    value     = "true"
+  }
 
   setting {
     namespace = "aws:elbv2:listener:80"
@@ -368,11 +368,11 @@ resource "aws_elastic_beanstalk_environment" "ui_env" {
     value     = aws_security_group.eb_security_group_lb.id
   }
 
-#   setting {
-#     namespace = "aws:elbv2:listener:443"
-#     name      = "SSLCertificateArns"
-#     value     = "arn:aws:acm:eu-west-1:804180393465:certificate/5ee45d38-ba76-4c13-a91f-614d4d872345" # Replace with your SSL certificate ARN
-#   }
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "SSLCertificateArns"
+    value     = "arn:aws:acm:eu-west-1:804180393465:certificate/5ee45d38-ba76-4c13-a91f-614d4d872345" # Replace with your SSL certificate ARN
+  }
 
 }
 

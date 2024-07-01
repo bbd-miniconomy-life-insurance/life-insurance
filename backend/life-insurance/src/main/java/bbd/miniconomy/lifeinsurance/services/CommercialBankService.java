@@ -17,7 +17,7 @@ public class CommercialBankService {
         this.communicationLayer = apiLayer;
     }
 
-    public CreateTransactionResponse createTransactions(CreateTransactionRequest transactions) {
+    public Result<CreateTransactionResponse> createTransactions(CreateTransactionRequest transactions) {
         return communicationLayer
                 .getCommercialBankAPI()
                 .createTransactions(transactions);
