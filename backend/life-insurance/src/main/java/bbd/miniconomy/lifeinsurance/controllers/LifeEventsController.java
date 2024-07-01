@@ -34,10 +34,7 @@ public class LifeEventsController {
         });
 
         executor.submit(() -> {
-            for (Long personaId : lifeEvents.getAdults()) {
-                // TODO: remove null
-                policyService.activatePolicy(personaId, null);
-            }
+            policyService.activatePolicy(lifeEvents.getAdults());
         });
 
         // returns immediately

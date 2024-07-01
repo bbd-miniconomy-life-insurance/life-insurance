@@ -7,12 +7,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+@AllArgsConstructor
 public class DebitOrderRequest {
-    private final String creditAccountName = "life-insurance";
     private String debitAccountName;
-    private double debitOrderAmount;
-    private String debitOrderReceiverRef;
-    private String debitOrderSenderRef;
+    private String creditAccountName;
+    private Long amount;
+    private String debitRef;
+    private String creditRef;
 }
 
