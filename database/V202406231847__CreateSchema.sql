@@ -25,7 +25,7 @@ CREATE TABLE "transaction" (
 CREATE TABLE "price" (
   "price_id" SERIAL PRIMARY KEY,
   "inception_date" varchar(10) NOT NULL,
-  "price" NUMERIC(12,2) NOT NULL
+  "price" BIGINT NOT NULL
 );
 
 ALTER TABLE "policy" ADD FOREIGN KEY ("status_id") REFERENCES "policy_status" ("status_id");
