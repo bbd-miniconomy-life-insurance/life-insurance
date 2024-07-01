@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class DebitOrderRequest {
-    private final String creditAccountName = CommercialBankAPI.BANK_ACCOUNT_NUMBER;
+    private final String creditAccountName = "life-insurance";
     private String debitAccountName;
     private double debitOrderAmount;
     private String debitOrderReceiverRef;
