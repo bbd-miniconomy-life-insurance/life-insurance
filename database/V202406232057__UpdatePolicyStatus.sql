@@ -9,7 +9,7 @@ DECLARE
 BEGIN
     SELECT "status_id" INTO v_status_id
     FROM "policy_status"
-    WHERE "statusName" = p_status_name;
+    WHERE "status_name" = p_status_name;
 
     UPDATE "policy"
     SET "status_id" = v_status_id

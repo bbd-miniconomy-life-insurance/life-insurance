@@ -1,10 +1,14 @@
 package bbd.miniconomy.lifeinsurance.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "price")
 public class Price {
@@ -18,30 +22,5 @@ public class Price {
     private Instant inceptionDate;
 
     @Column(name = "price", nullable = false, precision = 12, scale = 2)
-    private BigDecimal price;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Instant getInceptionDate() {
-        return inceptionDate;
-    }
-
-    public void setInceptionDate(Instant inceptionDate) {
-        this.inceptionDate = inceptionDate;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
+    private Long price;
 }

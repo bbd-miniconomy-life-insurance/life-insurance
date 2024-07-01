@@ -1,50 +1,44 @@
 import React, { useState } from 'react';
 import './styles.css';
 
+import { useGlobalState } from './state/GlobalState';
+
+import TableContentContainer from './components/tableContentContainer';
+import SideBarComponent from './components/sideBarComponent';
+import AuthComponent from './components/authComponent';
+import HeaderComponent from './components/headerComponent';
+
 function App() {
   const [selectedTable, setSelectedTable] = useState('Policies');
+  const { globalState, setGlobalState } = useGlobalState();
 
   return (
     <div className="dashboard">
-      <Sidebar />
-      <MainContent selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
+      <SideBarComponent />
+      <MainContent selectedTable={selectedTable} setSelectedTable={setSelectedTable} authenticated={globalState.isLoggedIn}/>
     </div>
   );
 }
 
-function Sidebar() {
-  return (
-    <div className="sidebar">
-      <h1>Life Insurance</h1>
-      <nav>
-        <ul>
-          <li><a href="#">Dashboard</a></li>
-          <li><a href="#">Tax Management</a></li>
-          <li><a href="#">Stock Exchange</a></li>
-        </ul>
-      </nav>
-    </div>
-  );
-}
 
-function MainContent({ selectedTable, setSelectedTable }) {
+function MainContent({ selectedTable, setSelectedTable,authenticated }) {
   return (
     <div className="main-content">
-      <Header />
-      <TableButtons selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
-      <TableDisplay selectedTable={selectedTable} />
+      <HeaderComponent/>
+      {authenticated?(
+        <>
+          <TableButtons selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
+          <TableContentContainer/>
+        </>
+      )
+      :<AuthComponent/>}
+      
+      {/*<TableDisplay selectedTable={selectedTable} />*/}
+      
     </div>
   );
 }
 
-function Header() {
-  return (
-    <div className="header">
-      <h2>Hello, user</h2>
-      <button>Sign out</button>
-    </div>
-  );
-}
 
 function TableButtons({ selectedTable, setSelectedTable }) {
   return (
@@ -52,21 +46,21 @@ function TableButtons({ selectedTable, setSelectedTable }) {
       <TableButtonsBox
         title="Policies"
         value="700"
-        color="#4da6ff"
+        color="#9E092A"
         active={selectedTable === 'Policies'}
         onClick={() => setSelectedTable('Policies')}
       />
       <TableButtonsBox
         title="Paid Out"
         value="230"
-        color="#4da6ff"
+        color="#7DD0F3"
         active={selectedTable === 'Paid Out'}
         onClick={() => setSelectedTable('Paid Out')}
       />
       <TableButtonsBox
         title="Payment History"
         value="1000"
-        color="#4da6ff"
+        color="#9E092A"
         active={selectedTable === 'Payment History'}
         onClick={() => setSelectedTable('Payment History')}
       />
@@ -81,8 +75,8 @@ function TableButtonsBox({ title, value, color, active, onClick }) {
       style={{ borderColor: color }}
       onClick={onClick}
     >
-      <h3>{title}</h3>
-      <p>{value}</p>
+      <p>{title}</p>
+      <h3>{value}</h3>
     </div>
   );
 }
