@@ -7,24 +7,24 @@ CREATE TABLE "policy" (
   "policy_id" SERIAL PRIMARY KEY,
   "persona_id" bigint NOT NULL,
   "status_id" bigint NOT NULL,
-  "inception_date" TIMESTAMP NOT NULL
+  "inception_date" varchar(10) NOT NULL
 );
 
 CREATE TABLE "debit_order" (
   "debit_order_id" SERIAL PRIMARY KEY,
   "policy_id" bigint NOT NULL,
-  "debit_order_reference_number" string NOT NULL
+  "debit_order_reference_number" varchar(100) NOT NULL
 );
 
 CREATE TABLE "transaction" (
   "transaction_id" SERIAL PRIMARY KEY,
   "policy_id" bigint NOT NULL,
-  "transaction_reference_number" string NOT NULL
+  "transaction_reference_number" varchar(100) NOT NULL
 );
 
 CREATE TABLE "price" (
   "price_id" SERIAL PRIMARY KEY,
-  "inception_date" TIMESTAMP NOT NULL,
+  "inception_date" varchar(10) NOT NULL,
   "price" NUMERIC(12,2) NOT NULL
 );
 
