@@ -22,14 +22,6 @@ CREATE TABLE "transaction" (
   "transaction_reference_number" string NOT NULL
 );
 
-CREATE TABLE "payment_history" (
-  "payment_history_id" SERIAL PRIMARY KEY,
-  "policy_id" BIGINT NOT NULL,
-  "time" TIMESTAMP NOT NULL,
-  "amount" NUMERIC(12,2),
-  FOREIGN KEY ("policy_id") REFERENCES "policy" ("policy_id")
-);
-
 CREATE TABLE "price" (
   "price_id" SERIAL PRIMARY KEY,
   "inception_date" TIMESTAMP NOT NULL,
