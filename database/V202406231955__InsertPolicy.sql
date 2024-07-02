@@ -1,5 +1,5 @@
 CREATE OR REPLACE PROCEDURE insert_policy(
-    IN p_persona_id INT
+    IN p_persona_id INT,
     IN p_inception_date DATE
 )
 LANGUAGE plpgsql

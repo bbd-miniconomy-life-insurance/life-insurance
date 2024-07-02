@@ -11,5 +11,5 @@ import java.sql.Date;
 @AllArgsConstructor
 public class PolicyInsertDTO {
     private Long personaId;
-    private Date inceptionDate;
+    private String inceptionDate;
 }

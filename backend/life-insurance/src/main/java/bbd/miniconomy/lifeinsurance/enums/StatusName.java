@@ -4,5 +4,6 @@ public enum StatusName {
     Active,
     PaidOut,
     Pending,
-    Lapsed
+    Lapsed,
+    Unknown
 }

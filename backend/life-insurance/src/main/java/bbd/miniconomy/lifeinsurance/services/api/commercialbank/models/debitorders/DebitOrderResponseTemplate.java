@@ -1,6 +1,5 @@
-package bbd.miniconomy.lifeinsurance.services.api.commercialbank.models;
+package bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders;
 
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.CommercialBankAPI;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

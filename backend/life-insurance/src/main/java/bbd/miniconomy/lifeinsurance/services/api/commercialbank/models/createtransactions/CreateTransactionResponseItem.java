@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class CreateTransactionResponseItem {
+    private String id;
     private String debitAccountName;
     private String creditAccountName;
     private Long amount;
