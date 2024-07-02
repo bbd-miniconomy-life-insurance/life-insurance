@@ -400,7 +400,7 @@ resource "aws_apigatewayv2_domain_name" "api" {
 
   domain_name_configuration {
     certificate_arn = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041"
-    endpoint_type   = ["REGIONAL"]
+    endpoint_type   = "REGIONAL"
     security_policy = "TLS_1_2"
   } 
   mutual_tls_authentication {
