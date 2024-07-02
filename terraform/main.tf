@@ -449,10 +449,29 @@ resource "aws_lb_target_group" "api_lb_tg" {
 }
 
 
+# resource "aws_lb_listener" "api_lb_listener" {
+#   load_balancer_arn = aws_lb.api_lb.arn
+#   port              = "80"
+#   protocol          = "HTTP"
+
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.api_lb_tg.arn
+#   }
+
+#   mutual_authentication {
+#     mode            = "verify"
+#     trust_store_arn = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041"
+#   }
+# }
+
 resource "aws_lb_listener" "api_lb_listener" {
   load_balancer_arn = aws_lb.api_lb.arn
-  port              = "80"
-  protocol          = "HTTP"
+  port              = 443
+  protocol          = "HTTPS"
+
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041"
 
   default_action {
     type             = "forward"
@@ -464,6 +483,7 @@ resource "aws_lb_listener" "api_lb_listener" {
     trust_store_arn = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041"
   }
 }
+
 
 
 
