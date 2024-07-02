@@ -20,7 +20,11 @@ resource "aws_iam_role" "github_action_role" {
         "Principal" : {
           "Federated" : "arn:aws:iam::${var.account_number}:oidc-provider/token.actions.githubusercontent.com"
         },
-        "Action" : "sts:AssumeRoleWithWebIdentity",
+        "Action" : [ 
+        "sts:AssumeRoleWithWebIdentity",
+        "apigateway:POST",
+        "apigateway:GET"
+      ],
         "Condition" : {
           "StringEquals" : {
             "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
