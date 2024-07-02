@@ -430,23 +430,23 @@ resource "aws_lb" "api_lb" {
   subnets            = aws_subnet.public_subnets[*].id
 }
 
-# resource "aws_lb_target_group" "api_lb_tg" {
-#   name     = "${var.project_name}-api-tg"
-#   port     = 80
-#   protocol = "HTTP"
-#   vpc_id   = aws_vpc.vpc.id
+resource "aws_lb_target_group" "api_lb_tg" {
+  name     = "${var.project_name}-api-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.vpc.id
 
-#   health_check {
-#     path                = "/"
-#     protocol            = "HTTP"
-#     port                = "traffic-port"
-#     interval            = 30
-#     timeout             = 5
-#     healthy_threshold   = 5
-#     unhealthy_threshold = 2
-#     matcher             = "200-299"
-#   }
-# }
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    port                = "traffic-port"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    matcher             = "200-299"
+  }
+}
 
 
 # resource "aws_lb_listener" "api_lb_listener" {
