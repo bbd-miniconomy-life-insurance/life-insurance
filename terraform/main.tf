@@ -481,7 +481,7 @@ resource "aws_lb_listener" "api_lb_listener" {
 
   mutual_authentication {
     mode            = "verify"
-    trust_store_arn = "arn:aws:elasticloadbalancing:eu-west-1:804180393465:truststore/lie-truststore/f873543a3ca00331"
+    trust_store_arn = aws_apigatewayv2_domain_name.api.mutual_tls_authentication
   }
 }
 
