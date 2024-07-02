@@ -11,6 +11,7 @@ import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtra
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderCreateRequest;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderRequest;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderResponseTemplate;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.editdebitorder.EditDebitOrderResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public class CommercialBankService {
                     .debitRef("Life Insurance premium for " + personaId + " activated")
                     .creditRef("Life Insurance premium")
                     .build()
-            )   
+            )
             .toList();
 
         var debitOrderCreateRequest = new DebitOrderCreateRequest(debitOrderRequests);
@@ -75,26 +76,18 @@ public class CommercialBankService {
                 .createDebitOrder(debitOrderCreateRequest);
     }
 
-//    public Result<DebitOrderRequest> updateDebitOrders(List<Long> personaIds, double amount) {
-//        List<Result<DebitOrderRequest>> results = personaIds.stream()
-//            .map(personaId -> {
-//                // build requests
-//                DebitOrderRequest claimRequest = DebitOrderRequest
-//                        .builder()
-//                        .debitAccountName(personaId.toString())
-//                        .debitOrderAmount(amount)
-//                        .debitOrderReceiverRef("Life Insurance premium from " + personaId)
-//                        .debitOrderSenderRef("Life Insurance premium")
-//                        .build();
-//
-//                // send requests
-//                return communicationLayer
-//                        .getCommercialBankAPI()
-//                        .createDebitOrder(claimRequest);
-//            })
-//            .collect(Collectors.toList());
-//
-//        // return results;
-//        return null;
-//    }
+    public Result<EditDebitOrderResponse> updateDebitOrder(String debitOrderReferenceNumber, long amount, long personaId) {
+        // create request
+        var debitOrderRequests = DebitOrderRequest
+                .builder()
+                .debitAccountName("life-insurance")
+                .creditAccountName(String.valueOf(personaId))
+                .amount(amount)
+                .debitRef("Life Insurance premium for " + personaId + " activated")
+                .creditRef("Life Insurance premium")
+                .build();
+
+        // call commercial
+        return communicationLayer.getCommercialBankAPI().updateDebitOrder(debitOrderReferenceNumber, debitOrderRequests);
+    }
 }

@@ -13,4 +13,6 @@ public interface DebitOrderRepository extends JpaRepository<DebitOrder, Long> {
     @Transactional
     @Query(value = "CALL insert_debit_order(:personaId, :debitOrderReference)", nativeQuery = true)
     void insertDebitOrder(@Param("personaId") Long personaId, @Param("debitOrderReference") String debitOrderReference);
+
+    DebitOrder findByPolicy(Policy policy);
 }

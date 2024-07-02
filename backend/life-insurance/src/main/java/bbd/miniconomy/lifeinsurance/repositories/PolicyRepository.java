@@ -5,9 +5,10 @@ import bbd.miniconomy.lifeinsurance.models.entities.Policy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public interface PolicyRepository extends JpaRepository<Policy, Long> {
     boolean existsByPersonaId(Long personaId);
@@ -22,4 +23,8 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
     void insertPolicy(@Param("personaId") Long personaId, @Param("inceptionDate") String inceptionDate);
 
     Long countByStatus_StatusName(StatusName statusName);
+    // Adding a method to fetch all policies by their status
+    // TODO: Add a query method to get all active policies
+    List<Policy> findAllByStatus_StatusName(StatusName statusName);
+
 }
