@@ -471,6 +471,7 @@ resource "aws_lb_listener" "api_lb_listener" {
   protocol          = "HTTPS"
 
   ssl_policy        = "ELBSecurityPolicy-2016-08"
+
   certificate_arn   = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041"
 
   default_action {
@@ -480,7 +481,7 @@ resource "aws_lb_listener" "api_lb_listener" {
 
   mutual_authentication {
     mode            = "verify"
-    trust_store_arn = "arn:aws:acm:eu-west-1:804180393465:certificate/d1865b28-a928-479b-abed-882f0c53a041"
+    trust_store_arn = "arn:aws:elasticloadbalancing:eu-west-1:804180393465:truststore/lie-truststore/f873543a3ca00331"
   }
 }
 
