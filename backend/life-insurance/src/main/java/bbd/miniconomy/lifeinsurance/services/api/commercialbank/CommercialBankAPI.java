@@ -4,7 +4,9 @@ import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequest;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderCreateRequest;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderRequest;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderResponseTemplate;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.editdebitorder.EditDebitOrderResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -65,18 +67,18 @@ public class CommercialBankAPI {
          }
      }
 
-    public Result<DebitOrderResponseTemplate> updateDebitOrder(DebitOrderRequest request) {
+    public Result<EditDebitOrderResponse> updateDebitOrder(String debitOrderReferenceNumber, DebitOrderRequest request) {
         try {
             return Result.success(
                     client.put()
                             .uri(uriBuilder -> uriBuilder
                                     .path("/debitOrders/{id}")
-                                    .build(request.getDebitAccountId()))
+                                    .build(debitOrderReferenceNumber))
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .body(BodyInserters.fromValue(requests))
+                            .body(BodyInserters.fromValue(request))
                             .retrieve()
-                            .bodyToMono(DebitOrderResponseTemplate.class)
+                            .bodyToMono(EditDebitOrderResponse.class)
                             .block()
             );
         } catch (Exception e) {
