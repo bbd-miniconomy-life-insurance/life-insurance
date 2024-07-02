@@ -4,7 +4,6 @@ import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequest;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderCreateRequest;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderListResponseTemplate;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderResponseTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
