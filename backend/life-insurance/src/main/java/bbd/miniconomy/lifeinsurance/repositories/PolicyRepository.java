@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 public interface PolicyRepository extends JpaRepository<Policy, Long> {
     boolean existsByPersonaId(Long personaId);
 
@@ -23,10 +21,5 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
     @Query(value = "CALL insert_policy(:personaId, :inceptionDate)", nativeQuery = true)
     void insertPolicy(@Param("personaId") Long personaId, @Param("inceptionDate") String inceptionDate);
 
-
     Long countByStatus_StatusName(StatusName statusName);
-
-    @Procedure("reset_database")
-    void resetDatabase();
-
 }

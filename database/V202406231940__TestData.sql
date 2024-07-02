@@ -2,6 +2,7 @@ INSERT INTO "policy_status" ("status_name") VALUES
 ('Active'),
 ('PaidOut'),
 ('Pending'),
+('Unknown'),
 ('Lapsed');
 
 INSERT INTO "policy" ("persona_id", "status_id", "inception_date") VALUES
