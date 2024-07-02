@@ -71,3 +71,8 @@ resource "aws_iam_role_policy_attachment" "github_action_role_attachment_c" {
   role       = aws_iam_role.github_action_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
 }
+
+resource "aws_iam_role_policy_attachment" "github_action_role_attachment_gateway" {
+  role       = aws_iam_role.github_action_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonAPIGatewayAdministrator"
+}
