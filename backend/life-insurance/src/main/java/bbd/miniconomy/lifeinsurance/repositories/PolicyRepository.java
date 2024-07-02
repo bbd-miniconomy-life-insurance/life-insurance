@@ -28,6 +28,10 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
         policyInsertDTOs.forEach(dto -> insertPolicy(dto.getPersonaId(), dto.getInceptionDate()));
     }
 
+    // Adding a method to fetch all policies by their status
+    // TODO: Add a query method to get all active policies
+    List<Policy> findAllByStatus_StatusName(StatusName statusName);
+
 //    @Query("SELECT COUNT(p) FROM Policy p WHERE p.status.statusName = 'Active'")
 //    long countActivePolicies();
 

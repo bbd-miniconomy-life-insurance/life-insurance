@@ -1,15 +1,14 @@
 package bbd.miniconomy.lifeinsurance.services;
 
+import org.springframework.stereotype.Service;
+
 import bbd.miniconomy.lifeinsurance.models.Result;
+import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
 import bbd.miniconomy.lifeinsurance.services.api.APILayer;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequest;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.DebitOrderRequest;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.DebitOrderCreateRequest;
-import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
-import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderRequest;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderResponseTemplate;
 
 @Service
 public class CommercialBankService {
@@ -41,7 +40,7 @@ public class CommercialBankService {
                     .debitRef("Life Insurance premium for " + personaId + " activated")
                     .creditRef("Life Insurance premium")
                     .build();
-            )   
+            )
             .toList()
 
         var debitOrderCreateRequest = new DebitOrderCreateRequest(debitOrderRequests);
@@ -52,26 +51,34 @@ public class CommercialBankService {
                 .createDebitOrder(debitOrderCreateRequest);
     }
 
-    public Result<DebitOrderRequest> updateDebitOrders(List<Long> personaIds, double amount) {
-        List<Result<DebitOrderRequest>> results = personaIds.stream()
-            .map(personaId -> {
-                // build requests
-                DebitOrderRequest claimRequest = DebitOrderRequest
-                        .builder()
-                        .debitAccountName(personaId.toString())
-                        .debitOrderAmount(amount)
-                        .debitOrderReceiverRef("Life Insurance premium from " + personaId)
-                        .debitOrderSenderRef("Life Insurance premium")
-                        .build();
+    public Result<DebitOrderResponseTemplate> updateDebitOrder(String debitOrderReferenceNumber, long amount) {
+        DebitOrderRequest debitOrderRequest = new DebitOrderRequest
+            .Builder()
+            .debitOrderReferenceNumber(debitOrderReferenceNumber) // Ensure this builder method is properly defined in DebitOrderRequest.
+            .amount(amount)
+            // TODO: Add the rest of the fields (debitAccountName, creditAccountName, debitRef, creditRef)
+            .build();
 
-                // send requests
-                return communicationLayer
-                        .getCommercialBankAPI()
-                        .createDebitOrder(claimRequest);
-            })
-            .collect(Collectors.toList());
-
-        // return results;
-        return null;
+        // Call the updateDebitOrder method of the CommercialBankAPI
+        // Assuming it returns Result<DebitOrderResponseTemplate> as per its signature.
+        return communicationLayer.getCommercialBankAPI().updateDebitOrder(debitOrderRequest);
     }
+
+    // public List<Result<DebitOrderResponseTemplate>> updateDebitOrders(List<Long> personaIds, long amount) {
+    //     return personaIds.stream()
+    //         .map(personaId -> {
+    //             DebitOrderRequest debitOrderRequest = new DebitOrderRequest.Builder()
+    //                 .debitAccountName(personaId.toString())
+    //                 .creditAccountName("life-insurance")
+    //                 .amount(amount)
+    //                 .debitRef("Life Insurance premium update for " + personaId)
+    //                 .creditRef("Life Insurance premium")
+    //                 .build();
+
+    //             // Correctly handle the Result type to match the expected type from the API
+    //             Result<DebitOrderResponseTemplate> result = communicationLayer.getCommercialBankAPI().updateDebitOrder(debitOrderRequest);
+    //             return result;
+    //         })
+    //         .collect(Collectors.toList());
+    // }
 }
