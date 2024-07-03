@@ -70,7 +70,8 @@ public class TimeService {
     @Scheduled(fixedRate = 1000 * 60 * 2 * 30)
     public void runMonthlyTasks() {
         // tax
-        revenueService.calculateTax(getMonthStart(), getMonthEnd());
+        Double taxAmount = revenueService.calculateTax(getMonthStart(), getMonthEnd()).getValue().getTaxAmount();
+        revenueService.payTax(taxAmount.longValue());
 
         // dividends
         stockExchangeService.Dividence(getMonthStart(), getMonthEnd());
