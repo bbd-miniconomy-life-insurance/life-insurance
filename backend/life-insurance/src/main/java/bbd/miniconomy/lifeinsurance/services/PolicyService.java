@@ -1,21 +1,18 @@
 package bbd.miniconomy.lifeinsurance.services;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import bbd.miniconomy.lifeinsurance.enums.StatusName;
 import bbd.miniconomy.lifeinsurance.models.Result;
-import bbd.miniconomy.lifeinsurance.models.dto.GlobalLifeInsuranceResponse;
 import bbd.miniconomy.lifeinsurance.models.entities.DebitOrder;
 import bbd.miniconomy.lifeinsurance.models.entities.Price;
 import bbd.miniconomy.lifeinsurance.repositories.DebitOrderRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
+import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorders.DebitOrderResponseTemplate;
 import bbd.miniconomy.lifeinsurance.services.api.handofzeus.models.getprice.GetPriceResponse;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
-
-import java.util.List;
 
 @Service
 public class PolicyService {
@@ -66,18 +63,18 @@ public class PolicyService {
         Result<GetPriceResponse> getPriceResponseResult = handOfZeusService.getPriceOfLifeInsurance();
 
         if (getPriceResponseResult.isFailure()) {
-            // Todo: set price to 0
             return;
         }
 
         long latestPrice = priceRepository.findFirstByOrderByInceptionDateDesc().getPrice();
+        long zeusPrice = getPriceResponseResult.getValue().getPrice();
 
-        if (latestPrice == getPriceResponseResult.getValue().getPrice()) {
+        if (latestPrice == zeusPrice) {
             return;
         }
 
         Price newPrice = new Price();
-        newPrice.setPrice(getPriceResponseResult.getValue().getPrice());
+        newPrice.setPrice(zeusPrice);
         newPrice.setInceptionDate("todo");
         priceRepository.save(newPrice);
 
@@ -85,7 +82,7 @@ public class PolicyService {
         policyRepository.findAllByStatus_StatusName(StatusName.Active)
                 .forEach(policy -> {
                     DebitOrder debitOrder = debitOrderRepository.findByPolicy(policy);
-                    commercialBankService.updateDebitOrder(debitOrder.getDebitOrderReferenceNumber(), getPriceResponseResult.getValue().getPrice(), policy.getPersonaId());
+                    commercialBankService.updateDebitOrder(debitOrder.getDebitOrderReferenceNumber(), zeusPrice, policy.getPersonaId());
                 });
 
 
