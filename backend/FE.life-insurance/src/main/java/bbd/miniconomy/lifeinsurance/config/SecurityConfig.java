@@ -28,10 +28,6 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(new AntPathRequestMatcher("/reset"))
-                        .permitAll()
-                )
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

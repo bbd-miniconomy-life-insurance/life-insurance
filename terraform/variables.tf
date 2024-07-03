@@ -123,3 +123,9 @@ variable "JWK_SET_URI" {
   description = "JWK_SET_URI"
   sensitive = true
 }
+
+variable "cors_configuration" {
+  description = "Allowed origins for CORS configuration"
+  type        = list(string)
+  default     = ["http://localhost", "https://localhost"]  # Allow localhost for development
+}
