@@ -119,6 +119,28 @@ public class StockExchangeAPI {
         }
     }
 
+    public Result<List<StockListingResponse>> stockListing() {
+        try {
+            return Result.success(
+                    client
+                            .get()
+                            .uri(uriBuilder -> uriBuilder
+                                    .path("/stocks")
+                                    .build()
+                            )
+                            .accept(MediaType.APPLICATION_JSON)
+                            .retrieve()
+                            .bodyToFlux(StockListingResponse.class)
+                            .collectList()
+                            .block()
+            );
+        } catch (Exception e) {
+            // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
+            e.printStackTrace();
+            return Result.failure("Communication With Stock Exchange Failed");
+        }
+    }
+
     public Result<DividendsResponse> Dividends(DividendsRequest requests) {
         try {
             return Result.success(

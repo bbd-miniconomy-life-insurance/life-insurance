@@ -84,7 +84,6 @@ public class StockExchangeService {
             // registerBusiness();
             return Result.failure("No TradingID");
         }
-        
         var buyStockRequest = BuyStockRequest
             .builder()
             .buyerId(tradingID)

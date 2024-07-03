@@ -18,9 +18,8 @@ public class TransactionHistory {
     private Integer id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "transaction_type_id", nullable = false)
-    private TransactionType transactionType;
+    @Column(name = "reference", nullable = false)
+    private String reference;
 
     @NotNull
     @Column(name = "amount", nullable = false)

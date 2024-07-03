@@ -42,14 +42,9 @@ CREATE TABLE "constants" (
 
 CREATE TABLE "transaction_history" (
   "transaction_history_id" SERIAL PRIMARY KEY,
-  "transaction_type_id" bigint NOT NULL,
   "amount" bigint NOT NULL,
-  "date" varchar(10) NOT NULL
-);
-
-CREATE TABLE "transaction_type" (
-  "transaction_type_id" SERIAL PRIMARY KEY,
-  "name" varchar(100) NOT NULL
+  "date" varchar(10) NOT NULL,
+  "reference" varchar(100) NOT NULL
 );
 
 ALTER TABLE "policy" ADD FOREIGN KEY ("status_id") REFERENCES "policy_status" ("status_id");

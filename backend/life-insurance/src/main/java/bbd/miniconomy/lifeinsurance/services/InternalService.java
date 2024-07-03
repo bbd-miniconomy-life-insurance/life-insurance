@@ -2,12 +2,17 @@ package bbd.miniconomy.lifeinsurance.services;
 
 import bbd.miniconomy.lifeinsurance.enums.StatusName;
 import bbd.miniconomy.lifeinsurance.models.Result;
+import bbd.miniconomy.lifeinsurance.models.entities.Stock;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
+import bbd.miniconomy.lifeinsurance.repositories.StockRepository;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequestTransaction;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.BuyStockRequest;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.BuyStockResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.StockListingResponse;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,24 +21,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InternalService {
+    private final StockRepository stockRepository;
     private final PolicyRepository policyRepository;
     private final PriceRepository priceRepository;
     private final Long probabilityOfDeathInMonth = (long)0.1;
     private final StockExchangeService stockExchangeService;
+    private final CommercialBankService commercialBankService;
 
     @Autowired
-    public InternalService(PolicyRepository policyRepository, PriceRepository priceRepository, StockExchangeService stockExchangeService) {
+    public InternalService(PolicyRepository policyRepository, PriceRepository priceRepository, StockExchangeService stockExchangeService, CommercialBankService commercialBankService, StockRepository stockRepository) {
         this.policyRepository = policyRepository;
         this.priceRepository = priceRepository;
         this.stockExchangeService = stockExchangeService;
+        this.commercialBankService = commercialBankService;
+        this.stockRepository = stockRepository;
     }
 
-    @Transactional
     public void Taxes() {
         // Not sure how this works yet
     }
 
-    @Transactional
     public void BuyStocksWithAvailableMoney() {
         Long moneyForStocks = (long)(EstimatedMonthlyIncome() * 0.3);
 
@@ -66,8 +73,34 @@ public class InternalService {
 
                 moneyForStocks -= buyStocksResponse.getValue().getAmountToPay();
 
-                //transaction
-                //stockRepository.InsertStock(stockListingResponse.getBusinessId(), buyStocksResponse.getValue().getAmountToPay()); // ToDo
+                var validTransactions = List.of(CreateTransactionRequestTransaction
+                        .builder()
+                        .debitAccountName("stock-exchange")
+                        .creditAccountName("life-insurance")
+                        .amount(buyStocksResponse.getValue().getAmountToPay())
+                        .debitRef(buyStocksResponse.getValue().getReferenceId())
+                        .creditRef("Bought Stocks")
+                        .build());
+
+                        
+                Result<CreateTransactionResponse> transactionsResult = commercialBankService.createTransactions(validTransactions);
+                        
+                if (transactionsResult.isFailure()) {
+                    return;
+                }
+                Stock stock = stockRepository.findByBusinessId(buyStocksResponse.getValue().getReferenceId());
+
+                if (stock == null){
+                    stock = Stock.builder()
+                        .businessId(buyStocksResponse.getValue().getReferenceId())
+                        .quantity(buyStocksResponse.getValue().getQuantity())
+                        .build();
+                }
+                else{
+                    stock.setQuantity(stock.getQuantity() + buyStocksResponse.getValue().getQuantity());
+                }
+
+                stockRepository.save(stock);
             }
             else 
             {
@@ -83,22 +116,38 @@ public class InternalService {
         if (stockListings.isFailure()) {
             return;
         }
+
         while (stillRequiredAmount > 0) {
-            // Get owned stock return if none
-            // Calculate total value
-            // Max(value, stillRequiredAmount)
-            // Sell on stocks, sell on bank
-            // update our stock table
-            // return or try sell more
+            var firstStock = stockRepository.findFirstByOrderByQuantityDesc();
 
+            if (firstStock.getQuantity() <= 0) {
+                return;
+            }
 
-            //stockRepository.GetOwnedStock
-            //if no stock return
-            stockListings.getValue().stream().filter(stockListing -> stockListing.getBusinessId() == ownedStockBusinessId);
-            // amountOwned *
-            stockExchangeService.sellStocks(null, null);
-            //Update stock table
-            //stillRequiredAmount - 
+            var stockListing = stockListings
+                .getValue()
+                .stream()
+                .filter(sl -> sl.getBusinessId() == firstStock.getBusinessId()).findFirst();
+
+            if (stockListing.isPresent()) {
+                var stockTotalValue = stockListing.get().getCurrentMarketValue() * firstStock.getQuantity();
+                stockTotalValue = Math.min(stillRequiredAmount, stockTotalValue);
+                Integer quantityToSell = (int)Math.ceil((stockTotalValue / stockListing.get().getCurrentMarketValue()));
+
+                var sellStocksResult = stockExchangeService.sellStocks(firstStock.getBusinessId(), quantityToSell);
+
+                if (sellStocksResult.isFailure()){
+                    return;
+                }
+
+                stillRequiredAmount -= quantityToSell * stockListing.get().getCurrentMarketValue();
+
+                firstStock.setQuantity(firstStock.getQuantity() - quantityToSell);
+                stockRepository.save(firstStock);
+            }
+            else{
+                return;
+            }
         }
     }
 
