@@ -10,10 +10,9 @@ import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyStatusRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
 import bbd.miniconomy.lifeinsurance.repositories.TransactionRepository;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequest;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequestTransaction;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponsePaymentStatus;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequestTransaction;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

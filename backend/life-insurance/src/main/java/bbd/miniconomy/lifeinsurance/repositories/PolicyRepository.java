@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface PolicyRepository extends JpaRepository<Policy, Long> {
+public interface PolicyRepository extends JpaRepository<Policy, Integer> {
     boolean existsByPersonaId(Long personaId);
 
     boolean existsByPersonaIdAndStatus_StatusName(Long personaId, StatusName statusName);

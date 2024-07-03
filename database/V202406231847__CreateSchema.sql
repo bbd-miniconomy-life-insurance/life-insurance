@@ -28,8 +28,29 @@ CREATE TABLE "price" (
   "price" BIGINT NOT NULL
 );
 
+CREATE TABLE "stocks" (
+  "stocks_id" SERIAL PRIMARY KEY,
+  "businessId" varchar(100) NOT NULL,
+  "quantity" int NOT NULL
+);
+
+CREATE TABLE "constants" (
+  "constants_id" SERIAL PRIMARY KEY,
+  "name" varchar(100) NOT NULL,
+  "id" varchar(100) NOT NULL
+);
+
+CREATE TABLE "transaction_history" (
+  "transaction_history_id" SERIAL PRIMARY KEY,
+  "amount" bigint NOT NULL,
+  "date" varchar(10) NOT NULL,
+  "reference" varchar(100) NOT NULL
+);
+
 ALTER TABLE "policy" ADD FOREIGN KEY ("status_id") REFERENCES "policy_status" ("status_id");
 
 ALTER TABLE "transaction" ADD FOREIGN KEY ("policy_id") REFERENCES "policy" ("policy_id");
 
 ALTER TABLE "debit_order" ADD FOREIGN KEY ("policy_id") REFERENCES "policy" ("policy_id");
+
+ALTER TABLE "transaction_history" ADD FOREIGN KEY ("transaction_type_id") REFERENCES "transaction_type" ("transaction_type_id");

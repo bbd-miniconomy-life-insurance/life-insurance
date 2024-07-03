@@ -7,8 +7,10 @@ import lombok.Setter;
 @Setter
 public class PaymentNotificationTransactionDTO {
     private String id;
-    private Long amount;
     private String debitAccountName;
     private String creditAccountName;
-    private String errorMessage;
+    private Long amount;
+    private String status;
+    private String reference;
+    private String date;
 }

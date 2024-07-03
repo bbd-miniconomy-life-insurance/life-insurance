@@ -15,6 +15,4 @@ public class ResetRepository {
         return (boolean) entityManager.createNativeQuery("SELECT reset_database()")
                 .getSingleResult();
     }
-
-
 }
