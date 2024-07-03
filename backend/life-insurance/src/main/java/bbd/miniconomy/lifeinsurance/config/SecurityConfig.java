@@ -28,7 +28,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(new AntPathRequestMatcher("/life-events"))
+                        .requestMatchers(new AntPathRequestMatcher("/reset"))
                         .permitAll()
                 )
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests

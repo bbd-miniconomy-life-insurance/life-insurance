@@ -1,7 +1,7 @@
 package bbd.miniconomy.lifeinsurance.controllers;
 
-import bbd.miniconomy.lifeinsurance.models.dto.lifeevents.LifeEventsDTO;
 import bbd.miniconomy.lifeinsurance.models.dto.GlobalLifeInsuranceResponse;
+import bbd.miniconomy.lifeinsurance.models.dto.lifeevents.LifeEventsDTO;
 import bbd.miniconomy.lifeinsurance.services.ClaimsService;
 import bbd.miniconomy.lifeinsurance.services.PolicyService;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/life-events")
+@RequestMapping("/dailyUpdate")
 public class LifeEventsController {
 
     private final ClaimsService claimsService;
@@ -26,19 +26,10 @@ public class LifeEventsController {
     }
 
     @PostMapping
-    public GlobalLifeInsuranceResponse HandleLifeEvents(
-            @RequestBody LifeEventsDTO lifeEvents) {
+    public GlobalLifeInsuranceResponse HandleLifeEvents(@RequestBody LifeEventsDTO lifeEvents) {
 
-        executor.submit(() -> {
-            claimsService.payClaims(lifeEvents.getDeaths());
-        });
-
-        executor.submit(() -> {
-            for (Long personaId : lifeEvents.getAdults()) {
-                // TODO: remove null
-                policyService.activatePolicy(personaId, null);
-            }
-        });
+        executor.submit(() -> claimsService.payClaims(lifeEvents.getDeaths()));
+        executor.submit(() -> policyService.activatePolicy(lifeEvents.getAdults()));
 
         // returns immediately
         return GlobalLifeInsuranceResponse.builder()

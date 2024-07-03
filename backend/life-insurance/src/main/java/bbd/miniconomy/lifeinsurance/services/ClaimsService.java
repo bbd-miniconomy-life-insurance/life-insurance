@@ -5,9 +5,11 @@ import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.models.dto.lifeevents.LifeEventsDeathDTO;
 import bbd.miniconomy.lifeinsurance.models.entities.Policy;
 import bbd.miniconomy.lifeinsurance.models.entities.Price;
+import bbd.miniconomy.lifeinsurance.models.entities.Transaction;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyStatusRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
+import bbd.miniconomy.lifeinsurance.repositories.TransactionRepository;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequest;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponsePaymentStatus;
@@ -21,17 +23,18 @@ public class ClaimsService {
 
     private final CommercialBankService commercialBankService;
     private final PolicyRepository policyRepository;
-    private final PriceRepository priceRepository;
     private final PolicyStatusRepository policyStatusRepository;
+    private final TransactionRepository transactionRepository;
 
     public ClaimsService(
             CommercialBankService commercialBankService,
             PolicyRepository policyRepository,
-            PriceRepository priceRepository, PolicyStatusRepository policyStatusRepository
+            PolicyStatusRepository policyStatusRepository,
+            TransactionRepository transactionRepository
     ) {
         this.commercialBankService = commercialBankService;
         this.policyRepository = policyRepository;
-        this.priceRepository = priceRepository;
+        this.transactionRepository = transactionRepository;
         this.policyStatusRepository = policyStatusRepository;
     }
 
@@ -42,25 +45,11 @@ public class ClaimsService {
                 .filter(claim -> policyRepository.existsByPersonaIdAndStatus_StatusName(claim.getDeceased(), StatusName.Active))
                 .toList();
 
-        List<CreateTransactionRequestTransaction> validTransactions = validClaims
-                .stream()
-                .map(claim -> CreateTransactionRequestTransaction
-                        .builder()
-                        .debitAccountName("life-insurance")
-                        .creditAccountName(claim.getDeceased().toString())
-                        .amount(calculatePayout())
-                        .debitRef("Life insurance pay out for death of " + claim.getDeceased())
-                        .creditRef("Claim for " + claim.getDeceased() + " paid to " + claim.getNextOfKin())
-                        .build()
-                )
-                .toList();
-
-        if (validTransactions.isEmpty()) {
+        if (validClaims.isEmpty()) {
             return;
         }
 
-        Result<CreateTransactionResponse> transactionsResult = commercialBankService
-                .createTransactions(new CreateTransactionRequest(validTransactions));
+        Result<CreateTransactionResponse> transactionsResult = commercialBankService.createTransactions(validClaims);
 
         if (transactionsResult.isFailure()) {
             return;
@@ -69,10 +58,20 @@ public class ClaimsService {
         CreateTransactionResponse transactions = transactionsResult.getValue();
 
         // TODO: Refactor assumption that validClaims and validTransactions are the same length and order
+        // Could use the credit ref message: Claim for " + claim.getDeceased() + " paid to " + claim.getNextOfKin()
         for (int i = 0; i < validClaims.size(); i++) {
             // for each one, update the policy record
             Policy deceasedPolicy = policyRepository.findByPersonaId(validClaims.get(i).getDeceased());
-            CreateTransactionResponsePaymentStatus transactionStatus = CreateTransactionResponsePaymentStatus.valueOf(transactions.getData().getItems().get(i).getStatus());
+            var responseFromBank = transactions.getData().getItems().get(i);
+
+            // save transaction
+            Transaction transaction = new Transaction();
+            transaction.setPolicy(deceasedPolicy);
+            transaction.setTransactionReferenceNumber(responseFromBank.getId());
+            transactionRepository.save(transaction);
+
+            // update policy
+            CreateTransactionResponsePaymentStatus transactionStatus = CreateTransactionResponsePaymentStatus.valueOf(responseFromBank.getStatus());
             switch (transactionStatus) {
                 case pending -> {
                     deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName(StatusName.Pending));
@@ -83,14 +82,11 @@ public class ClaimsService {
                     policyRepository.save(deceasedPolicy);
                 }
                 default -> {
-                    // TODO: means the transactionStatus is unknown... do nothing for now.
+                    // This is actually an issue...
+                    deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName(StatusName.Unknown));
+                    policyRepository.save(deceasedPolicy);
                 }
             }
         }
-    }
-
-    private Long calculatePayout() {
-        Price currentPremium = priceRepository.findFirstByOrderByInceptionDateDesc();
-        return currentPremium.getPrice() * 30;
     }
 }

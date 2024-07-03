@@ -1,3 +1,8 @@
+package bbd.miniconomy.lifeinsurance.services;
+
+import bbd.miniconomy.lifeinsurance.enums.StatusName;
+import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
+import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,9 +34,13 @@ public class InternalService {
         // Buy stocks
     }
 
+    public void SellStocks(){
+        
+    }
+
     private double EstimatedMonthlyIncome(){
-        long activatePoliciesCount = policyRepository.countActivePolicies();
-        double currentPremiumPrice = priceRepository.findFirstByOrderByInceptionDateDesc();
+        long activatePoliciesCount = policyRepository.countByStatus_StatusName(StatusName.Active);
+        double currentPremiumPrice = priceRepository.findFirstByOrderByInceptionDateDesc().getPrice();
         
         double moneyIn = activatePoliciesCount * currentPremiumPrice;
         double moneyOut = activatePoliciesCount * currentPremiumPrice * 30 * probabilityOfDeathInMonth;
