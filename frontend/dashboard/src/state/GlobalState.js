@@ -10,7 +10,12 @@ export const GlobalStateProvider = ({ children }) => {
     isLoggedIn: false,
     username: '',
     profileUrl: '',
-    jwtToken: ''
+    jwtToken: '',
+    selectedTable: 'Policies',
+    page:0,
+    policyCount:0,
+    transactionCount:0,
+    displayNext:true
   });
 
   return (

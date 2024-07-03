@@ -1,35 +1,99 @@
-import React from 'react'
-import TableComponent from './tableComponent'
-export default function tableContentContainer() {
-  let data = generateData();
+import React, { useEffect, useState } from 'react';
+import { makeGetRequest,getPaginatedData } from '../service/_api';
+import { useGlobalState } from '../state/GlobalState';
+import TableComponent from './tableComponent';
+
+export default function TableContentContainer() {
+  const { globalState, setGlobalState } = useGlobalState();
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    const fetchTableData = async () => {
+      try {
+        const data = await getPaginatedData(globalState.selectedTable.toLowerCase(),globalState, setGlobalState);
+        setTableData(data);
+        setGlobalState({
+          ...globalState,
+          displayNext:data.length>=8
+        });
+      } catch (error) {
+        console.error('Error fetching policies:', error);
+      }
+    };
+
+    const fetchStats = async () => {
+      try {
+        const data = await makeGetRequest('counts',globalState, setGlobalState);
+        setGlobalState({
+          ...globalState,
+          policyCount:data.policyCount,
+          transactionCount: data.transactionCount
+        });
+      } catch (error) {
+        console.error('Error fetching policies:', error);
+      }
+    };
+
+    if (globalState.isLoggedIn) {
+      fetchTableData();
+      fetchStats();
+    }
+  }, [globalState.isLoggedIn, globalState.selectedTable,globalState.page]);
+
 
   return (
     <div className='table-container'>
-        <TableComponent
-        col1="Policy"
-        col2="Date Started"
-        col3="PersonaId"/>
-        {
-            data.map((row,i)=>(
+        {globalState.selectedTable === 'Policies' && (
+            <div className='table-header'>
                 <TableComponent
-                col1={row.policy}
-                col2={row.dateStarted}
-                col3={row.personaId}/>
-            ))
-        }
-    </div>
-  )
-}
+                    col1="PolicyId"
+                    col2="Persona Id"
+                    col3="Inception Date"
+                    col4="Status"
+                />
+                <div className='table-content'>
+                    {tableData.length > 0 ? (
+                        tableData.map((row) => (
+                            <TableComponent
+                                key={row.id || row.personaId}
+                                col1={row.id}
+                                col2={row.personaId}
+                                col3={row.inceptionDate}
+                                col4={row.status}
+                            />
+                        ))
+                    ) : (
+                        <h3>Loading data...</h3>
+                    )}
+                </div>
+            </div>
+        )}
 
-const generateData = () => {
-    const data = [];
-    for (let i = 1; i <= 50; i++) {
-      data.push({
-        policy: `Policy-${i}`,
-        dateStarted: new Date(2023, i % 12, i % 28 + 1).toLocaleDateString(),
-        personaId: `ID-${Math.floor(Math.random() * 1000)}`,
-      });
-    }
-    return data;
-  };
-  
+        {globalState.selectedTable === 'Transactions' && (
+            <div className='table-header'>
+                <TableComponent
+                    col1="Transaction Id"
+                    col2="Date"
+                    col3="Reference"
+                    col4="Amount (&#208;)"
+                />
+                <div className='table-content'>
+                    {tableData.length > 0 ? (
+                        tableData.map((row) => (
+                            <TableComponent
+                                key={row.id}
+                                col1={row.id}
+                                col2={row.date}
+                                col3={row.reference}
+                                col4={row.amount}
+                            />
+                        ))
+                    ) : (
+                        <h3>Loading data...</h3>
+                    )}
+                </div>
+            </div>
+        )}
+    </div>
+);
+};
