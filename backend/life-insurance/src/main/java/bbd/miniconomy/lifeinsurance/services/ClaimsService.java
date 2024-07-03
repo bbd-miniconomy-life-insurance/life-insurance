@@ -4,16 +4,12 @@ import bbd.miniconomy.lifeinsurance.enums.StatusName;
 import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.models.dto.lifeevents.LifeEventsDeathDTO;
 import bbd.miniconomy.lifeinsurance.models.entities.Policy;
-import bbd.miniconomy.lifeinsurance.models.entities.Price;
 import bbd.miniconomy.lifeinsurance.models.entities.Transaction;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyStatusRepository;
-import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
 import bbd.miniconomy.lifeinsurance.repositories.TransactionRepository;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequest;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponsePaymentStatus;
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequestTransaction;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

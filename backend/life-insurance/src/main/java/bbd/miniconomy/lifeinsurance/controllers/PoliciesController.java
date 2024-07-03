@@ -3,8 +3,6 @@ package bbd.miniconomy.lifeinsurance.controllers;
 import bbd.miniconomy.lifeinsurance.enums.StatusName;
 import bbd.miniconomy.lifeinsurance.models.dto.GlobalLifeInsuranceResponse;
 import bbd.miniconomy.lifeinsurance.models.dto.PolicyPriceRequestDTO;
-import bbd.miniconomy.lifeinsurance.models.entities.DebitOrder;
-import bbd.miniconomy.lifeinsurance.models.entities.Price;
 import bbd.miniconomy.lifeinsurance.repositories.DebitOrderRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
 import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
