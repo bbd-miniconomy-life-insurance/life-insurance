@@ -3,21 +3,22 @@ package bbd.miniconomy.lifeinsurance.services;
 import bbd.miniconomy.lifeinsurance.enums.ConstantName;
 import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.models.entities.Constant;
-import bbd.miniconomy.lifeinsurance.models.entities.Stock;
+import bbd.miniconomy.lifeinsurance.models.entities.Transaction;
 import bbd.miniconomy.lifeinsurance.repositories.ConstantsRepository;
+import bbd.miniconomy.lifeinsurance.repositories.TransactionHistoryRepository;
 import bbd.miniconomy.lifeinsurance.services.api.APILayer;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequestTransaction;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.CreateBusinessRequest;
-import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.CreateBusinessResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.DividendsRequest;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.DividendsResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.SellStockRequest;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.SellStockResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.StockListingResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.BuyStockRequest;
-import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.BuyStockResponse;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,11 +26,13 @@ public class StockExchangeService {
     private final APILayer communicationLayer; 
     private final ConstantsRepository constantsRepository;
     private final CommercialBankService commercialBankService;
+    private final TransactionHistoryRepository historyRepository;
 
-    public StockExchangeService(APILayer apiLayer, ConstantsRepository constantsRepository, CommercialBankService commercialBankService) {
+    public StockExchangeService(APILayer apiLayer, ConstantsRepository constantsRepository, CommercialBankService commercialBankService, TransactionHistoryRepository historyRepository) {
         this.communicationLayer = apiLayer;
         this.constantsRepository = constantsRepository;
         this.commercialBankService = commercialBankService;
+        this.historyRepository = historyRepository;
     }
 
     public void registerBusiness(){
@@ -66,13 +69,16 @@ public class StockExchangeService {
     }
 
     public void buyStocks(String businessId, Long maxPrice){
-        String tradingID = constantsRepository.findByName(ConstantName.tradingID.toString()).getId();
+        Constant constant = constantsRepository.findByName(ConstantName.tradingID.toString());
 
-        if (tradingID == null){
+        if (constant == null){
             // Todo
             // registerBusiness();
             return;
         }
+
+        String tradingID = constant.getId();
+
         var buyStockRequest = BuyStockRequest
             .builder()
             .buyerId(tradingID)
@@ -91,16 +97,18 @@ public class StockExchangeService {
         .stockListing();
     }
 
-    public Result<DividendsResponse> Dividence(){
-        String tradingID = constantsRepository.findByName(ConstantName.tradingID.toString()).getId();
+    public Result<DividendsResponse> Dividence(LocalDateTime monthStart, LocalDateTime monthEnd){
+        Constant constant = constantsRepository.findByName(ConstantName.tradingID.toString());
 
-        if (tradingID == null){
+        if (constant == null){
             // Todo
             // registerBusiness();
             return Result.failure("No TradingID");
         }
 
-        Long amount = 0L; // Call Moshe's thing
+        String tradingID = constant.getId();
+
+        Long amount = historyRepository.findSumOfTransactionsFromLastMonth(monthStart, monthEnd);
 
         var dividendsRequest = DividendsRequest
         .builder()

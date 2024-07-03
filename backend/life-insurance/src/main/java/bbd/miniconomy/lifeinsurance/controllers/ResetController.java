@@ -1,16 +1,5 @@
 package bbd.miniconomy.lifeinsurance.controllers;
 
-import bbd.miniconomy.lifeinsurance.models.dto.reset.ResetDTO;
-import bbd.miniconomy.lifeinsurance.models.entities.Price;
-import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
-import bbd.miniconomy.lifeinsurance.services.TimeService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import bbd.miniconomy.lifeinsurance.models.dto.GlobalLifeInsuranceResponse;
 import bbd.miniconomy.lifeinsurance.models.dto.reset.ResetDTO;
 import bbd.miniconomy.lifeinsurance.models.entities.Price;
@@ -18,6 +7,13 @@ import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
 import bbd.miniconomy.lifeinsurance.repositories.ResetRepository;
 import bbd.miniconomy.lifeinsurance.services.PolicyService;
 import bbd.miniconomy.lifeinsurance.services.RevenueService;
+import bbd.miniconomy.lifeinsurance.services.TimeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/control-simulation")

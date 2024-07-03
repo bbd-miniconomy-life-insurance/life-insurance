@@ -12,6 +12,8 @@ import bbd.miniconomy.lifeinsurance.services.api.revenue.models.CalculateRevenue
 import bbd.miniconomy.lifeinsurance.services.api.revenue.models.CalculateRevenueResponse;
 import bbd.miniconomy.lifeinsurance.services.api.revenue.models.CreateRevenueRequest;
 
+import java.time.LocalDateTime;
+
 @Service
 public class RevenueService {
     private final APILayer communicationLayer; 
@@ -50,7 +52,7 @@ public class RevenueService {
     }
 
     //@Scheduled(fixedRate = 1000 * 60 * 2 * 30)
-    public Result<CalculateRevenueResponse> calculateTax(){
+    public Result<CalculateRevenueResponse> calculateTax(LocalDateTime startMonth, LocalDateTime endMonth){
 
         var calculateRevenueRequest = CalculateRevenueRequest
         .builder()
@@ -62,5 +64,7 @@ public class RevenueService {
         return communicationLayer
         .getRevenueAPI()
         .calculateTax(calculateRevenueRequest);
+
+        // TODO pay tax.
     }
 }
