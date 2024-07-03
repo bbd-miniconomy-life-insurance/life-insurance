@@ -2,6 +2,7 @@ package bbd.miniconomy.lifeinsurance.services;
 
 import bbd.miniconomy.lifeinsurance.models.entities.Constant;
 import bbd.miniconomy.lifeinsurance.repositories.ConstantsRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -12,13 +13,25 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class TimeService {
     private final ConstantsRepository constantsRepository;
+    private final RevenueService revenueService;
+    private final StockExchangeService stockExchangeService;
+    private final InternalService internalService;
 
-    public TimeService(ConstantsRepository constantsRepository) {
+    public TimeService(ConstantsRepository constantsRepository, RevenueService revenueService, StockExchangeService stockExchangeService, InternalService internalService) {
         this.constantsRepository = constantsRepository;
+        this.revenueService = revenueService;
+        this.stockExchangeService = stockExchangeService;
+        this.internalService = internalService;
     }
 
     public LocalDateTime getGameTime() {
         Constant startTimeString = constantsRepository.findByName("startDate");
+
+        if (startTimeString == null) {
+            // we no have time.
+            setStartTime(LocalDateTime.now());
+            return getGameTime();
+        }
 
         LocalDateTime startTime = LocalDateTime.parse(startTimeString.getId(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         return calculateTimeFromStart(startTime);
@@ -52,5 +65,29 @@ public class TimeService {
         var day = (daysIntoYear % 30);
 
         return LocalDateTime.of((int) year, (int) month, (int) day, 0, 0);
+    }
+
+    @Scheduled(fixedRate = 1000 * 60 * 2 * 30)
+    public void runMonthlyTasks() {
+        // tax
+        Double taxAmount = revenueService.calculateTax(getMonthStart(), getMonthEnd()).getValue().getTaxAmount();
+        revenueService.payTax(taxAmount.longValue());
+
+        // dividends
+        stockExchangeService.Dividence(getMonthStart(), getMonthEnd());
+
+        // stocks buy   
+        internalService.BuyStocksWithAvailableMoney();
+
+    }
+
+    public LocalDateTime getMonthStart() {
+        LocalDateTime currentTime = getGameTime();
+        return LocalDateTime.of(currentTime.getYear(), currentTime.getMonthValue(), 1, 0, 0);
+    }
+
+    public LocalDateTime getMonthEnd() {
+        LocalDateTime currentTime = getGameTime();
+        return LocalDateTime.of(currentTime.getYear(), currentTime.getMonthValue(), 30, 0, 0);
     }
 }
