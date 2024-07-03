@@ -82,6 +82,11 @@ variable "frontend_certificate" {
   description = "The Frontend number for the SSL certificate."
 }
 
+variable "backend_frontend_certificate" {
+  type        = string
+  description = "The Backend Frontend number for the SSL certificate."
+}
+
 variable "AWS_RDS_ENDPOINT" {
   type        = string
   description = "AWS_RDS_ENDPOINT"
