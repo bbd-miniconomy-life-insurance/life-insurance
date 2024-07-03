@@ -7,6 +7,8 @@ import TableContentContainer from './components/tableContentContainer';
 import SideBarComponent from './components/sideBarComponent';
 import AuthComponent from './components/authComponent';
 import HeaderComponent from './components/headerComponent';
+import TableButtons from './components/tableButtons';
+import MainContent from './components/mainContent';
 
 function App() {
   const [selectedTable, setSelectedTable] = useState('Policies');
@@ -21,65 +23,8 @@ function App() {
 }
 
 
-function MainContent({ selectedTable, setSelectedTable,authenticated }) {
-  return (
-    <div className="main-content">
-      <HeaderComponent/>
-      {authenticated?(
-        <>
-          <TableButtons selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
-          <TableContentContainer/>
-        </>
-      )
-      :<AuthComponent/>}
-      
-      {/*<TableDisplay selectedTable={selectedTable} />*/}
-      
-    </div>
-  );
-}
 
 
-function TableButtons({ selectedTable, setSelectedTable }) {
-  return (
-    <div className="table-buttons">
-      <TableButtonsBox
-        title="Policies"
-        value="700"
-        color="#9E092A"
-        active={selectedTable === 'Policies'}
-        onClick={() => setSelectedTable('Policies')}
-      />
-      <TableButtonsBox
-        title="Paid Out"
-        value="230"
-        color="#7DD0F3"
-        active={selectedTable === 'Paid Out'}
-        onClick={() => setSelectedTable('Paid Out')}
-      />
-      <TableButtonsBox
-        title="Payment History"
-        value="1000"
-        color="#9E092A"
-        active={selectedTable === 'Payment History'}
-        onClick={() => setSelectedTable('Payment History')}
-      />
-    </div>
-  );
-}
-
-function TableButtonsBox({ title, value, color, active, onClick }) {
-  return (
-    <div
-      className={`table-buttons-box ${active ? 'active' : ''}`}
-      style={{ borderColor: color }}
-      onClick={onClick}
-    >
-      <p>{title}</p>
-      <h3>{value}</h3>
-    </div>
-  );
-}
 
 function TableDisplay({ selectedTable }) {
   let data;
