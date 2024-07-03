@@ -118,8 +118,8 @@ public class StockExchangeAPI {
             return Result.failure("Communication With Stock Exchange Failed");
         }
     }
-
-    public Result<List<StockListingResponse>> stockListing() {
+ 
+    public Result<List<StockListingResponse>> GetAllStocks() {
         try {
             return Result.success(
                     client
