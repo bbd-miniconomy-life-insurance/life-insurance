@@ -13,19 +13,20 @@ import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.SellStockR
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.SellStockResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.StockListingResponse;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 
 @Component
 public class StockExchangeAPI {
     static final WebClient client = WebClient
             .builder()
-            .baseUrl("https://mese.projects.bbdgrad.com/")
-            .defaultHeader("Authorization", "Bearer MY_SECRET_TOKEN")
+            .baseUrl("https://mese.projects.bbdgrad.com")
             .build();
 
     public void registerBusiness(CreateBusinessRequest requests) {
@@ -42,6 +43,7 @@ public class StockExchangeAPI {
                 .body(BodyInserters.fromValue(requests))
                 .retrieve()
                 .bodyToMono(CreateBusinessResponse.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                 .block();
         } catch (Exception e) {
             // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
@@ -64,6 +66,7 @@ public class StockExchangeAPI {
                             .body(BodyInserters.fromValue(requests))
                             .retrieve()
                             .bodyToMono(SellStockResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                             .block()
             );
         } catch (Exception e) {
@@ -87,6 +90,7 @@ public class StockExchangeAPI {
                 .body(BodyInserters.fromValue(requests))
                 .retrieve()
                 .bodyToMono(BuyStockResponse.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                 .block();
         } catch (Exception e) {
             // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
@@ -107,6 +111,7 @@ public class StockExchangeAPI {
                             .accept(MediaType.APPLICATION_JSON)
                             .retrieve()
                             .bodyToFlux(StockListingResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                             .collectList()
                             .block()
             );
@@ -129,6 +134,7 @@ public class StockExchangeAPI {
                             .accept(MediaType.APPLICATION_JSON)
                             .retrieve()
                             .bodyToFlux(StockListingResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                             .collectList()
                             .block()
             );
@@ -153,6 +159,7 @@ public class StockExchangeAPI {
                             .body(BodyInserters.fromValue(requests))
                             .retrieve()
                             .bodyToMono(DividendsResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                             .block()
             );
         } catch (Exception e) {

@@ -5,6 +5,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.services.api.handofzeus.models.getprice.GetPriceResponse;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 @Component
 public class HandOfZeusAPI {
@@ -25,6 +28,7 @@ public class HandOfZeusAPI {
                                 )
                                 .retrieve()
                                 .bodyToMono(GetPriceResponse.class)
+                                .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
                                 .block()
                 );
         } catch (Exception e) {

@@ -100,7 +100,7 @@ public class StockExchangeService {
             return Result.failure("No TradingID");
         }
 
-        Long amount = 0; // Call Moshe's thing
+        Long amount = 0L; // Call Moshe's thing
 
         var dividendsRequest = DividendsRequest
         .builder()
@@ -113,7 +113,7 @@ public class StockExchangeService {
             .Dividends(dividendsRequest);
 
         if (dividendsResponse.isFailure()) {
-            return Result.failure("Failed communication with stock exchange");
+            return dividendsResponse;
         }
 
         var validTransactions = List.of(CreateTransactionRequestTransaction
@@ -126,6 +126,8 @@ public class StockExchangeService {
             .build());
 
         commercialBankService.createTransactions(validTransactions);
+
+        return dividendsResponse;
     }
 
 }
