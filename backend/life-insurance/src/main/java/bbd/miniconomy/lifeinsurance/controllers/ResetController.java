@@ -62,6 +62,7 @@ public class ResetController {
         policyService.setPolicyPrice();
 
         // get tax id from SARS
+        // TODO - wrap in Result and if failure, it should return a response
         revenueService.registerTax();
 
         return new ResponseEntity<>(

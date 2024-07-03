@@ -99,7 +99,6 @@ public class PolicyService {
                     commercialBankService.updateDebitOrder(debitOrder.getDebitOrderReferenceNumber(), zeusPrice, policy.getPersonaId());
                 });
 
-
     }
 
 }

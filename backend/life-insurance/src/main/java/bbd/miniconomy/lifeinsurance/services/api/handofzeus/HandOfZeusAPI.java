@@ -23,7 +23,7 @@ public class HandOfZeusAPI {
                         client
                                 .get()
                                 .uri(uriBuilder -> uriBuilder
-                                        .path("/life-insurance-price")
+                                        .path("/life-insurance")
                                         .build()
                                 )
                                 .retrieve()
