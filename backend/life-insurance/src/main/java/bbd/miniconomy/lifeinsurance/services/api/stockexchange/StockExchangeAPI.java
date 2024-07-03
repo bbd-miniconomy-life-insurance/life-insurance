@@ -13,41 +13,42 @@ import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.SellStockR
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.SellStockResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.StockListingResponse;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 
 @Component
 public class StockExchangeAPI {
     static final WebClient client = WebClient
             .builder()
-            .baseUrl("https://mese.projects.bbdgrad.com/")
-            .defaultHeader("Authorization", "Bearer MY_SECRET_TOKEN")
+            .baseUrl("https://mese.projects.bbdgrad.com")
             .build();
 
-    public Result<CreateBusinessResponse> registerBusiness(CreateBusinessRequest requests) {
+    public void registerBusiness(CreateBusinessRequest requests) {
         try {
-            return Result.success(
-                    client
-                            .post()
-                            .uri(uriBuilder -> uriBuilder
-                                    .path("/businesses")
-                                    .build()
-                            )
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body(BodyInserters.fromValue(requests))
-                            .retrieve()
-                            .bodyToMono(CreateBusinessResponse.class)
-                            .block()
-            );
+            client
+                .post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/businesses")
+                        .queryParam("callbackUrl ", "/register-callback")
+                        .build()
+                )
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(requests))
+                .retrieve()
+                .bodyToMono(CreateBusinessResponse.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
+                .block();
         } catch (Exception e) {
             // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
             e.printStackTrace();
-            return Result.failure("Communication With Stock Exchange Failed");
+            return;
         }
     }
 
@@ -65,6 +66,7 @@ public class StockExchangeAPI {
                             .body(BodyInserters.fromValue(requests))
                             .retrieve()
                             .bodyToMono(SellStockResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                             .block()
             );
         } catch (Exception e) {
@@ -74,26 +76,26 @@ public class StockExchangeAPI {
         }
     }
     
-    public Result<BuyStockResponse> buyStocks(BuyStockRequest requests) {
+    public void buyStocks(BuyStockRequest requests) {
         try {
-            return Result.success(
-                    client
-                            .post()
-                            .uri(uriBuilder -> uriBuilder
-                                    .path("/stocks/buy")
-                                    .build()
-                            )
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body(BodyInserters.fromValue(requests))
-                            .retrieve()
-                            .bodyToMono(BuyStockResponse.class)
-                            .block()
-            );
+            client
+                .post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/stocks/buy")
+                        .queryParam("callbackUrl", "https://api.life.projects.bbdgrad.com/stock/buy-callback")
+                        .build()
+                )
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(requests))
+                .retrieve()
+                .bodyToMono(BuyStockResponse.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
+                .block();
         } catch (Exception e) {
             // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
             e.printStackTrace();
-            return Result.failure("Communication With Stock Exchange Failed");
+            return;
         }
     }
 
@@ -109,6 +111,7 @@ public class StockExchangeAPI {
                             .accept(MediaType.APPLICATION_JSON)
                             .retrieve()
                             .bodyToFlux(StockListingResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                             .collectList()
                             .block()
             );
@@ -131,6 +134,7 @@ public class StockExchangeAPI {
                             .accept(MediaType.APPLICATION_JSON)
                             .retrieve()
                             .bodyToFlux(StockListingResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                             .collectList()
                             .block()
             );
@@ -155,6 +159,7 @@ public class StockExchangeAPI {
                             .body(BodyInserters.fromValue(requests))
                             .retrieve()
                             .bodyToMono(DividendsResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                             .block()
             );
         } catch (Exception e) {

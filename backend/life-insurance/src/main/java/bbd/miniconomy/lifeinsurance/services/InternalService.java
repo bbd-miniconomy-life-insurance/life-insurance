@@ -1,6 +1,5 @@
 package bbd.miniconomy.lifeinsurance.services;
 
-import bbd.miniconomy.lifeinsurance.enums.StatusName;
 import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.models.entities.Stock;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
@@ -8,16 +7,13 @@ import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
 import bbd.miniconomy.lifeinsurance.repositories.StockRepository;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequestTransaction;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
-import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.BuyStockRequest;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.BuyStockResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.StockListingResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InternalService {
@@ -50,62 +46,25 @@ public class InternalService {
             return;
         }
 
-        while (moneyForStocks > 0) {
-            Optional<StockListingResponse> stockListing = stockListings
-                .getValue()
-                .stream()
-                .filter(sl -> sl.getQuantity() > 0)
-                .sorted((sl1, sl2) -> {
-                    double totalAvailableStock1 = sl1.getCurrentMarketValue() * sl1.getQuantity();
-                    double totalAvailableStock2 = sl2.getCurrentMarketValue() * sl2.getQuantity();
-                    return Double.compare(totalAvailableStock2, totalAvailableStock1);
-                })
-                .findFirst();
+        Optional<StockListingResponse> stockListing = stockListings
+            .getValue()
+            .stream()
+            .filter(sl -> sl.getQuantity() > 0)
+            .sorted((sl1, sl2) -> {
+                double totalAvailableStock1 = sl1.getCurrentMarketValue() * sl1.getQuantity();
+                double totalAvailableStock2 = sl2.getCurrentMarketValue() * sl2.getQuantity();
+                return Double.compare(totalAvailableStock2, totalAvailableStock1);
+            })
+            .findFirst();
 
-            if (stockListing.isPresent()) {
-                StockListingResponse stockListingResponse = stockListing.get();
+        if (stockListing.isPresent()) {
+            StockListingResponse stockListingResponse = stockListing.get();
 
-                Result<BuyStockResponse> buyStocksResponse = stockExchangeService.buyStocks(stockListingResponse.getBusinessId(), moneyForStocks);
-
-                if (buyStocksResponse.isFailure()) {
-                    return;
-                }
-
-                moneyForStocks -= buyStocksResponse.getValue().getAmountToPay();
-
-                var validTransactions = List.of(CreateTransactionRequestTransaction
-                        .builder()
-                        .debitAccountName("stock-exchange")
-                        .creditAccountName("life-insurance")
-                        .amount(buyStocksResponse.getValue().getAmountToPay())
-                        .debitRef(buyStocksResponse.getValue().getReferenceId())
-                        .creditRef("Bought Stocks")
-                        .build());
-
-                        
-                Result<CreateTransactionResponse> transactionsResult = commercialBankService.createTransactions(validTransactions);
-                        
-                if (transactionsResult.isFailure()) {
-                    return;
-                }
-                Stock stock = stockRepository.findByBusinessId(buyStocksResponse.getValue().getReferenceId());
-
-                if (stock == null){
-                    stock = Stock.builder()
-                        .businessId(buyStocksResponse.getValue().getReferenceId())
-                        .quantity(buyStocksResponse.getValue().getQuantity())
-                        .build();
-                }
-                else{
-                    stock.setQuantity(stock.getQuantity() + buyStocksResponse.getValue().getQuantity());
-                }
-
-                stockRepository.save(stock);
-            }
-            else 
-            {
-                return;
-            }
+            stockExchangeService.buyStocks(stockListingResponse.getBusinessId(), moneyForStocks);
+        }
+        else 
+        {
+            return;
         }
     }
 
@@ -152,7 +111,7 @@ public class InternalService {
     }
 
     private Long EstimatedMonthlyIncome(){
-        Long activatePoliciesCount = policyRepository.countByStatus_StatusName(StatusName.Active);
+        Long activatePoliciesCount = policyRepository.countByStatus_StatusName("Active");
         Long currentPremiumPrice = priceRepository.findFirstByOrderByInceptionDateDesc().getPrice();
         
         Long moneyIn = activatePoliciesCount * currentPremiumPrice;

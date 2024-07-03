@@ -11,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 
 @Component
@@ -34,6 +37,7 @@ public class CommercialBankAPI {
                             .body(BodyInserters.fromValue(requests))
                             .retrieve()
                             .bodyToMono(CreateTransactionResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
                             .block()
             );
         } catch (Exception e) {
@@ -57,6 +61,7 @@ public class CommercialBankAPI {
                              .body(BodyInserters.fromValue(request))
                              .retrieve()
                              .bodyToMono(DebitOrderResponseTemplate.class)
+                             .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
                              .block()
              );
          } catch (Exception e) {
@@ -78,6 +83,7 @@ public class CommercialBankAPI {
                             .body(BodyInserters.fromValue(request))
                             .retrieve()
                             .bodyToMono(EditDebitOrderResponse.class)
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(5)))
                             .block()
             );
         } catch (Exception e) {
