@@ -12,11 +12,10 @@ import bbd.miniconomy.lifeinsurance.services.api.handofzeus.models.getprice.GetP
 public class HandOfZeusService {
     private final APILayer communicationLayer;
 
-    public HandOfZeusService(APILayer apiLayer, PriceRepository priceRepository) {
+    public HandOfZeusService(APILayer apiLayer) {
         this.communicationLayer = apiLayer;
     }
 
-    // Todo: method to map HOZ request and call API
     public Result<GetPriceResponse> getPriceOfLifeInsurance() {
         return communicationLayer.getHandOfZeusAPI().getPriceOfLifeInsurance();
     }

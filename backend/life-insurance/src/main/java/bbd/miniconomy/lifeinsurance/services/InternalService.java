@@ -1,6 +1,5 @@
 package bbd.miniconomy.lifeinsurance.services;
 
-import bbd.miniconomy.lifeinsurance.enums.StatusName;
 import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.models.entities.Stock;
 import bbd.miniconomy.lifeinsurance.repositories.PolicyRepository;
@@ -8,16 +7,13 @@ import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
 import bbd.miniconomy.lifeinsurance.repositories.StockRepository;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequestTransaction;
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionResponse;
-import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.BuyStockRequest;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.BuyStockResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.StockListingResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InternalService {
@@ -115,7 +111,7 @@ public class InternalService {
     }
 
     private Long EstimatedMonthlyIncome(){
-        Long activatePoliciesCount = policyRepository.countByStatus_StatusName(StatusName.Active);
+        Long activatePoliciesCount = policyRepository.countByStatus_StatusName("Active");
         Long currentPremiumPrice = priceRepository.findFirstByOrderByInceptionDateDesc().getPrice();
         
         Long moneyIn = activatePoliciesCount * currentPremiumPrice;

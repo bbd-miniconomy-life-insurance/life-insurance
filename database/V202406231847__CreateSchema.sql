@@ -7,7 +7,7 @@ CREATE TABLE "policy" (
   "policy_id" SERIAL PRIMARY KEY,
   "persona_id" bigint NOT NULL,
   "status_id" bigint NOT NULL,
-  "inception_date" varchar(10) NOT NULL
+  "inception_date" timestamp NOT NULL
 );
 
 CREATE TABLE "debit_order" (
@@ -24,7 +24,7 @@ CREATE TABLE "transaction" (
 
 CREATE TABLE "price" (
   "price_id" SERIAL PRIMARY KEY,
-  "inception_date" varchar(10) NOT NULL,
+  "inception_date" timestamp NOT NULL,
   "price" BIGINT NOT NULL
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE "constants" (
 CREATE TABLE "transaction_history" (
   "transaction_history_id" SERIAL PRIMARY KEY,
   "amount" bigint NOT NULL,
-  "date" varchar(10) NOT NULL,
+  "date" timestamp NOT NULL,
   "reference" varchar(100) NOT NULL
 );
 
@@ -52,5 +52,3 @@ ALTER TABLE "policy" ADD FOREIGN KEY ("status_id") REFERENCES "policy_status" ("
 ALTER TABLE "transaction" ADD FOREIGN KEY ("policy_id") REFERENCES "policy" ("policy_id");
 
 ALTER TABLE "debit_order" ADD FOREIGN KEY ("policy_id") REFERENCES "policy" ("policy_id");
-
-ALTER TABLE "transaction_history" ADD FOREIGN KEY ("transaction_type_id") REFERENCES "transaction_type" ("transaction_type_id");

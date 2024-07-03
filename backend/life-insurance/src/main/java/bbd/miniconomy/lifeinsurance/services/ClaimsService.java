@@ -1,6 +1,5 @@
 package bbd.miniconomy.lifeinsurance.services;
 
-import bbd.miniconomy.lifeinsurance.enums.StatusName;
 import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.models.dto.lifeevents.LifeEventsDeathDTO;
 import bbd.miniconomy.lifeinsurance.models.entities.Policy;
@@ -43,7 +42,7 @@ public class ClaimsService {
         List<LifeEventsDeathDTO> validClaims = claims
                 .stream()
                 .filter(claim -> policyRepository.existsByPersonaId(claim.getDeceased()))
-                .filter(claim -> policyRepository.existsByPersonaIdAndStatus_StatusName(claim.getDeceased(), StatusName.Active))
+                .filter(claim -> policyRepository.existsByPersonaIdAndStatus_StatusName(claim.getDeceased(), "Active"))
                 .toList();
 
         if (validClaims.isEmpty()) {
@@ -88,16 +87,16 @@ public class ClaimsService {
             CreateTransactionResponsePaymentStatus transactionStatus = CreateTransactionResponsePaymentStatus.valueOf(responseFromBank.getStatus());
             switch (transactionStatus) {
                 case pending -> {
-                    deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName(StatusName.Pending));
+                    deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName("Pending"));
                     policyRepository.save(deceasedPolicy);
                 }
                 case completed -> {
-                    deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName(StatusName.PaidOut));
+                    deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName("PaidOut"));
                     policyRepository.save(deceasedPolicy);
                 }
                 default -> {
                     // This is actually an issue...
-                    deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName(StatusName.Unknown));
+                    deceasedPolicy.setStatus(policyStatusRepository.findPolicyStatusByStatusName("Unknown"));
                     policyRepository.save(deceasedPolicy);
                 }
             }
