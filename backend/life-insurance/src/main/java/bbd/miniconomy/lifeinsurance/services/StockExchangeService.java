@@ -56,7 +56,7 @@ public class StockExchangeService {
     }
 
     public Result<SellStockResponse> sellStocks(String companyId, Integer quantity){
-        String tradingID = constantsRepository.findIdByName(ConstantName.tradingID.toString());
+        String tradingID = constantsRepository.findByName(ConstantName.tradingID.toString()).getId();
 
         if (tradingID == null){
             // Todo
@@ -77,7 +77,7 @@ public class StockExchangeService {
     }
 
     public Result<BuyStockResponse> buyStocks(String businessId, Long maxPrice){
-        String tradingID = constantsRepository.findIdByName(ConstantName.tradingID.toString());
+        String tradingID = constantsRepository.findByName(ConstantName.tradingID.toString()).getId();
 
         if (tradingID == null){
             // Todo

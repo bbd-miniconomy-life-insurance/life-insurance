@@ -6,7 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ConstantsRepository extends JpaRepository<Constant, Integer>{
-    String findIdByName(String name);
-
     Constant findByName(String name);
 }
