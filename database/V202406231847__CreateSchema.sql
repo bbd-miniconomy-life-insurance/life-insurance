@@ -43,7 +43,7 @@ CREATE TABLE "constants" (
 CREATE TABLE "transaction_history" (
   "transaction_history_id" SERIAL PRIMARY KEY,
   "transaction_type_id" bigint NOT NULL,
-  "amount" Long NOT NULL,
+  "amount" bigint NOT NULL,
   "date" varchar(10) NOT NULL
 );
 
