@@ -50,62 +50,25 @@ public class InternalService {
             return;
         }
 
-        while (moneyForStocks > 0) {
-            Optional<StockListingResponse> stockListing = stockListings
-                .getValue()
-                .stream()
-                .filter(sl -> sl.getQuantity() > 0)
-                .sorted((sl1, sl2) -> {
-                    double totalAvailableStock1 = sl1.getCurrentMarketValue() * sl1.getQuantity();
-                    double totalAvailableStock2 = sl2.getCurrentMarketValue() * sl2.getQuantity();
-                    return Double.compare(totalAvailableStock2, totalAvailableStock1);
-                })
-                .findFirst();
+        Optional<StockListingResponse> stockListing = stockListings
+            .getValue()
+            .stream()
+            .filter(sl -> sl.getQuantity() > 0)
+            .sorted((sl1, sl2) -> {
+                double totalAvailableStock1 = sl1.getCurrentMarketValue() * sl1.getQuantity();
+                double totalAvailableStock2 = sl2.getCurrentMarketValue() * sl2.getQuantity();
+                return Double.compare(totalAvailableStock2, totalAvailableStock1);
+            })
+            .findFirst();
 
-            if (stockListing.isPresent()) {
-                StockListingResponse stockListingResponse = stockListing.get();
+        if (stockListing.isPresent()) {
+            StockListingResponse stockListingResponse = stockListing.get();
 
-                Result<BuyStockResponse> buyStocksResponse = stockExchangeService.buyStocks(stockListingResponse.getBusinessId(), moneyForStocks);
-
-                if (buyStocksResponse.isFailure()) {
-                    return;
-                }
-
-                moneyForStocks -= buyStocksResponse.getValue().getAmountToPay();
-
-                var validTransactions = List.of(CreateTransactionRequestTransaction
-                        .builder()
-                        .debitAccountName("stock-exchange")
-                        .creditAccountName("life-insurance")
-                        .amount(buyStocksResponse.getValue().getAmountToPay())
-                        .debitRef(buyStocksResponse.getValue().getReferenceId())
-                        .creditRef("Bought Stocks")
-                        .build());
-
-                        
-                Result<CreateTransactionResponse> transactionsResult = commercialBankService.createTransactions(validTransactions);
-                        
-                if (transactionsResult.isFailure()) {
-                    return;
-                }
-                Stock stock = stockRepository.findByBusinessId(buyStocksResponse.getValue().getReferenceId());
-
-                if (stock == null){
-                    stock = Stock.builder()
-                        .businessId(buyStocksResponse.getValue().getReferenceId())
-                        .quantity(buyStocksResponse.getValue().getQuantity())
-                        .build();
-                }
-                else{
-                    stock.setQuantity(stock.getQuantity() + buyStocksResponse.getValue().getQuantity());
-                }
-
-                stockRepository.save(stock);
-            }
-            else 
-            {
-                return;
-            }
+            stockExchangeService.buyStocks(stockListingResponse.getBusinessId(), moneyForStocks);
+        }
+        else 
+        {
+            return;
         }
     }
 

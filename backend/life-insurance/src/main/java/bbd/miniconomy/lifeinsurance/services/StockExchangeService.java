@@ -6,6 +6,7 @@ import bbd.miniconomy.lifeinsurance.models.entities.Constant;
 import bbd.miniconomy.lifeinsurance.models.entities.Stock;
 import bbd.miniconomy.lifeinsurance.repositories.ConstantsRepository;
 import bbd.miniconomy.lifeinsurance.services.api.APILayer;
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.createtransactions.CreateTransactionRequestTransaction;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.CreateBusinessRequest;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.CreateBusinessResponse;
 import bbd.miniconomy.lifeinsurance.services.api.stockexchange.models.DividendsRequest;
@@ -23,10 +24,12 @@ import java.util.List;
 public class StockExchangeService {
     private final APILayer communicationLayer; 
     private final ConstantsRepository constantsRepository;
+    private final CommercialBankService commercialBankService;
 
-    public StockExchangeService(APILayer apiLayer, ConstantsRepository constantsRepository) {
+    public StockExchangeService(APILayer apiLayer, ConstantsRepository constantsRepository, CommercialBankService commercialBankService) {
         this.communicationLayer = apiLayer;
         this.constantsRepository = constantsRepository;
+        this.commercialBankService = commercialBankService;
     }
 
     public void registerBusiness(){
@@ -36,23 +39,9 @@ public class StockExchangeService {
         .bankAccount("life-insurance")
         .build();
 
-        var result = communicationLayer
+        communicationLayer
         .getStockExchangeAPI()
         .registerBusiness(createBusinessRequest);
-
-        if (result.isFailure())
-        {
-            return;
-        }
-
-        var constant = Constant
-            .builder()
-            .id(result
-                .getValue()
-                .getId())
-            .name(ConstantName.tradingID.toString())
-            .build();
-        constantsRepository.save(constant);
     }
 
     public Result<SellStockResponse> sellStocks(String companyId, Integer quantity){
@@ -76,13 +65,13 @@ public class StockExchangeService {
         .sellStocks(sellStockRequest);
     }
 
-    public Result<BuyStockResponse> buyStocks(String businessId, Long maxPrice){
+    public void buyStocks(String businessId, Long maxPrice){
         String tradingID = constantsRepository.findIdByName(ConstantName.tradingID.toString());
 
         if (tradingID == null){
             // Todo
             // registerBusiness();
-            return Result.failure("No TradingID");
+            return;
         }
         var buyStockRequest = BuyStockRequest
             .builder()
@@ -91,9 +80,9 @@ public class StockExchangeService {
             .maxPrice(maxPrice)
             .build();
 
-        return communicationLayer
-        .getStockExchangeAPI()
-        .buyStocks(buyStockRequest);
+        communicationLayer
+            .getStockExchangeAPI()
+            .buyStocks(buyStockRequest);
     }
 
     public Result<List<StockListingResponse>> stockListing(){
@@ -102,16 +91,41 @@ public class StockExchangeService {
         .stockListing();
     }
 
-    public Result<DividendsResponse> Dividence(Long amount){
+    public Result<DividendsResponse> Dividence(){
+        String tradingID = constantsRepository.findIdByName(ConstantName.tradingID.toString());
+
+        if (tradingID == null){
+            // Todo
+            // registerBusiness();
+            return Result.failure("No TradingID");
+        }
+
+        Long amount = 0; // Call Moshe's thing
+
         var dividendsRequest = DividendsRequest
         .builder()
-        .businessId("")// get from db *The ID of the business requesting dividends distribution
+        .businessId(tradingID)
         .amount(amount)
         .build();
 
-        return communicationLayer
+        var dividendsResponse = communicationLayer
             .getStockExchangeAPI()
             .Dividends(dividendsRequest);
+
+        if (dividendsResponse.isFailure()) {
+            return Result.failure("Failed communication with stock exchange");
+        }
+
+        var validTransactions = List.of(CreateTransactionRequestTransaction
+            .builder()
+            .debitAccountName("stock-exchange")
+            .creditAccountName("life-insurance")
+            .amount(amount)
+            .debitRef(dividendsResponse.getValue().getReferenceId())
+            .creditRef("Bought Stocks")
+            .build());
+
+        commercialBankService.createTransactions(validTransactions);
     }
 
 }

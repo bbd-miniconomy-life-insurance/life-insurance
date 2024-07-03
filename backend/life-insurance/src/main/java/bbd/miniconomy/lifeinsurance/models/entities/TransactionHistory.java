@@ -3,12 +3,14 @@ package bbd.miniconomy.lifeinsurance.models.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "transaction_history")
 public class TransactionHistory {
     @Id
