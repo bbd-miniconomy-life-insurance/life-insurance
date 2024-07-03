@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class TimeService {
-    private LocalDateTime gameTime = null;
     private final ConstantsRepository constantsRepository;
 
     public TimeService(ConstantsRepository constantsRepository) {
@@ -19,24 +18,17 @@ public class TimeService {
     }
 
     public LocalDateTime getGameTime() {
-        if (gameTime == null) {
-            Constant startTimeString = constantsRepository.findByName("startDate");
+        Constant startTimeString = constantsRepository.findByName("startDate");
 
-            if (startTimeString == null) {
-                // TODO: call Hand of Zeus.
-            }
-
-            // convert to date
-            LocalDateTime startTime = LocalDateTime.parse(startTimeString.getId(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            this.gameTime = calculateTimeFromStart(startTime);
-        }
-
-        return gameTime;
+        LocalDateTime startTime = LocalDateTime.parse(startTimeString.getId(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return calculateTimeFromStart(startTime);
     }
 
     public void setStartTime(LocalDateTime startTime) {
-        // save to db if no record
-        if (constantsRepository.findByName("startDate") != null) {
+        // get the start date
+        Constant startTimeString = constantsRepository.findByName("startDate");
+
+        if (startTimeString != null) {
             return;
         }
 
@@ -49,14 +41,14 @@ public class TimeService {
     private LocalDateTime calculateTimeFromStart(LocalDateTime startTime) {
         // Get the current day of the simulation (eg: day 1302)
         LocalDateTime current = LocalDateTime.now();
-        long simulationDayNumber = (Duration.between(startTime, current).getSeconds() / 120) + 1;
+        long simulationDayNumber = (long) Math.floor(((double) Duration.between(startTime, current).getSeconds() / 120) + 1);
 
         // current year
-        long year = (simulationDayNumber / 360) + 1;
-        long daysIntoYear = simulationDayNumber % 360;
+        long year = (long) Math.floor(((double) simulationDayNumber / 360) + 1);
+        long daysIntoYear = (long) Math.floor(simulationDayNumber % 360);
 
         // month and day
-        var month = (daysIntoYear / 30) + 1;
+        var month = (long) Math.floor(((double) daysIntoYear / 30) + 1);
         var day = (daysIntoYear % 30);
 
         return LocalDateTime.of((int) year, (int) month, (int) day, 0, 0);
