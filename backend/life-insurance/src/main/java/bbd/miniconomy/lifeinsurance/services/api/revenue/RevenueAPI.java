@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class RevenueAPI {
     static final WebClient client = WebClient
             .builder()
-            .baseUrl("https://api.mers.projects.bbdgrad.com/=/")
+            .baseUrl("https://api.mers.projects.bbdgrad.com")
             .defaultHeader("Authorization", "Bearer MY_SECRET_TOKEN")
             .build();
 }

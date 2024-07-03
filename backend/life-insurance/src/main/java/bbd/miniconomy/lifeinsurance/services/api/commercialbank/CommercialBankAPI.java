@@ -17,8 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class CommercialBankAPI {
     static final WebClient client = WebClient
             .builder()
-            .baseUrl("https://api.commercialbank.projects.bbdgrad.com/")
-            .defaultHeader("Authorization", "Bearer MY_SECRET_TOKEN")
+            .baseUrl("https://api.commercialbank.projects.bbdgrad.com")
             .build();
 
     public Result<CreateTransactionResponse> createTransactions(CreateTransactionRequest requests) {
