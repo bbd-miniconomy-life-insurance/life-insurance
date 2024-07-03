@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class PaymentsNotificationService {
     private final TransactionHistoryRepository transactionHistoryRepository;
-    private final InternalService internalService;
+    private final TimeService timeService;
 
-    public PaymentsNotificationService(InternalService internalService, TransactionHistoryRepository transactionHistoryRepository) {
-        this.internalService = internalService;
+    public PaymentsNotificationService(TimeService timeService, TransactionHistoryRepository transactionHistoryRepository) {
+        this.timeService = timeService;
         this.transactionHistoryRepository = transactionHistoryRepository;
     }
 
@@ -23,7 +23,7 @@ public class PaymentsNotificationService {
             .builder()
             .amount(notification.getTransaction().getAmount())
             .reference(notification.getTransaction().getReference())
-            .date(notification.getTransaction().getDate())
+            .date(timeService.getGameTime())
             .build();
         transactionHistoryRepository.save(transactionHistory);
     }
@@ -33,7 +33,7 @@ public class PaymentsNotificationService {
             .builder()
             .amount(notification.getTransaction().getAmount())
             .reference(notification.getTransaction().getReference())
-            .date(notification.getTransaction().getDate())
+            .date(timeService.getGameTime())
             .build();
         transactionHistoryRepository.save(transactionHistory);
     }
