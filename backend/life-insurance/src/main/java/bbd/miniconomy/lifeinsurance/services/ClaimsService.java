@@ -25,17 +25,19 @@ public class ClaimsService {
     private final PolicyRepository policyRepository;
     private final PolicyStatusRepository policyStatusRepository;
     private final TransactionRepository transactionRepository;
+    private final PriceRepository priceRepository;
 
     public ClaimsService(
             CommercialBankService commercialBankService,
             PolicyRepository policyRepository,
             PolicyStatusRepository policyStatusRepository,
-            TransactionRepository transactionRepository
+            TransactionRepository transactionRepository, PriceRepository priceRepository
     ) {
         this.commercialBankService = commercialBankService;
         this.policyRepository = policyRepository;
         this.transactionRepository = transactionRepository;
         this.policyStatusRepository = policyStatusRepository;
+        this.priceRepository = priceRepository;
     }
 
     public void payClaims(List<LifeEventsDeathDTO> claims) {
@@ -49,7 +51,20 @@ public class ClaimsService {
             return;
         }
 
-        Result<CreateTransactionResponse> transactionsResult = commercialBankService.createTransactions(validClaims);
+        var validTransactions = claims
+                .stream()
+                .map(claim -> CreateTransactionRequestTransaction
+                        .builder()
+                        .debitAccountName("life-insurance")
+                        .creditAccountName(claim.getDeceased().toString())
+                        .amount(calculatePayout())
+                        .debitRef("Life insurance pay out for death of " + claim.getDeceased())
+                        .creditRef("Claim for " + claim.getDeceased() + " paid to " + claim.getNextOfKin())
+                        .build()
+                )
+                .toList();
+
+        Result<CreateTransactionResponse> transactionsResult = commercialBankService.createTransactions(validTransactions);
 
         if (transactionsResult.isFailure()) {
             return;
@@ -88,5 +103,10 @@ public class ClaimsService {
                 }
             }
         }
+    }
+
+    private Long calculatePayout() {
+        Price currentPremium = priceRepository.findFirstByOrderByInceptionDateDesc();
+        return currentPremium.getPrice() * 30;
     }
 }
