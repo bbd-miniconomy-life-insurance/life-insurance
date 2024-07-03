@@ -15,11 +15,13 @@ public class TimeService {
     private final ConstantsRepository constantsRepository;
     private final RevenueService revenueService;
     private final StockExchangeService stockExchangeService;
+    private final InternalService internalService;
 
-    public TimeService(ConstantsRepository constantsRepository, RevenueService revenueService, StockExchangeService stockExchangeService) {
+    public TimeService(ConstantsRepository constantsRepository, RevenueService revenueService, StockExchangeService stockExchangeService, InternalService internalService) {
         this.constantsRepository = constantsRepository;
         this.revenueService = revenueService;
         this.stockExchangeService = stockExchangeService;
+        this.internalService = internalService;
     }
 
     public LocalDateTime getGameTime() {
@@ -73,8 +75,8 @@ public class TimeService {
         // dividends
         stockExchangeService.Dividence(getMonthStart(), getMonthEnd());
 
-        // stocks buy
-//        stockExchangeService.buyStocks();
+        // stocks buy   
+        internalService.BuyStocksWithAvailableMoney();
 
     }
 
