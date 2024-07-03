@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -20,7 +22,7 @@ public class Price {
     @Size(max = 10)
     @NotNull
     @Column(name = "inception_date", nullable = false, length = 10)
-    private String inceptionDate;
+    private LocalDateTime inceptionDate;
 
     @NotNull
     @Column(name = "price", nullable = false)

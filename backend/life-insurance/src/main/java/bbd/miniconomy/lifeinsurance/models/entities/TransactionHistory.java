@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -28,6 +30,6 @@ public class TransactionHistory {
     @Size(max = 10)
     @NotNull
     @Column(name = "date", nullable = false, length = 10)
-    private String date;
+    private LocalDateTime date;
 
 }
