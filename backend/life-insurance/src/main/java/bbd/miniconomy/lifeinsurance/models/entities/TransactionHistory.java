@@ -1,5 +1,7 @@
 package bbd.miniconomy.lifeinsurance.models.entities;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -28,6 +30,6 @@ public class TransactionHistory {
     @Size(max = 10)
     @NotNull
     @Column(name = "date", nullable = false, length = 10)
-    private String date;
+    private LocalDateTime date;
 
 }
