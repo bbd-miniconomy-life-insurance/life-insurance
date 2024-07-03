@@ -378,15 +378,15 @@ resource "aws_elastic_beanstalk_environment" "ui_env" {
 
 # BACKEND FOR FRONTEND
 resource "aws_elastic_beanstalk_application" "frontend_api_app" {
-  name        = "${var.project_name}-web-app"
+  name        = "${var.project_name}-frontend-api-app"
   description = "Beanstalk application"
 }
 
 resource "aws_elastic_beanstalk_environment" "frontend_api_env" {
-  name                = "${var.project_name}-web-env"
+  name                = "${var.project_name}-frontend-api-env"
   application         = aws_elastic_beanstalk_application.frontend_api_app.name
   solution_stack_name = "64bit Amazon Linux 2023 v4.2.5 running Corretto 21"
-  cname_prefix        = "${var.project_name}-frontend_api"
+  cname_prefix        = "${var.project_name}-frontend-api"
 
   setting {
     namespace = "aws:ec2:vpc"

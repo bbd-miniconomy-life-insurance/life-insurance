@@ -164,5 +164,5 @@ jobs:
         working-directory: ./backend/FE.life-insurance/target
         run: |
           version_label="app-$(date +'%Y%m%d%H%M%S')"
-          aws elasticbeanstalk create-application-version --application-name frontend_api_app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-frontend-api-${{ github.run_id }}.jar"
-          aws elasticbeanstalk update-environment --application-name frontend_api_app --environment-name frontend_api_env  --region eu-west-1 --version-label "$version_label"
+          aws elasticbeanstalk create-application-version --application-name life-insurance-frontend-api-app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-frontend-api-${{ github.run_id }}.jar"
+          aws elasticbeanstalk update-environment --application-name life-insurance-frontend-api-app --environment-name life-insurance-frontend_api_env  --region eu-west-1 --version-label "$version_label"
