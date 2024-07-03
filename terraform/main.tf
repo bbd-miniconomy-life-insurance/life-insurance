@@ -448,17 +448,17 @@ resource "aws_elastic_beanstalk_environment" "frontend_api_env" {
     value     = "basic"
   }
 
-#   setting {
-#     namespace = "aws:elbv2:listener:443"
-#     name      = "Protocol"
-#     value     = "HTTPS"
-#   }
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "Protocol"
+    value     = "HTTPS"
+  }
 
-#   setting {
-#     namespace = "aws:elbv2:listener:443"
-#     name      = "ListenerEnabled"
-#     value     = "true"
-#   }
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "ListenerEnabled"
+    value     = "true"
+  }
 
   setting {
     namespace = "aws:elbv2:listener:80"
@@ -484,11 +484,11 @@ resource "aws_elastic_beanstalk_environment" "frontend_api_env" {
     value     = aws_security_group.eb_security_group_lb.id
   }
 
-#   setting {
-#     namespace = "aws:elbv2:listener:443"
-#     name      = "SSLCertificateArns"
-#     value     = "arn:aws:acm:eu-west-1:804180393465:certificate/552a3b30-78d0-4436-a9d0-93ba831c9ee9" # Replace with your SSL certificate ARN
-#   }
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "SSLCertificateArns"
+    value     = "arn:aws:acm:eu-west-1:804180393465:certificate/552a3b30-78d0-4436-a9d0-93ba831c9ee9" # Replace with your SSL certificate ARN
+  }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
