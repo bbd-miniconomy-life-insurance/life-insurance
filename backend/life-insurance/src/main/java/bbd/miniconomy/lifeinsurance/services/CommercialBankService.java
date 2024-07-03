@@ -26,28 +26,10 @@ public class CommercialBankService {
         this.priceRepository = priceRepository;
     }
 
-    public Result<CreateTransactionResponse> createTransactions(List<LifeEventsDeathDTO> claims) {
-        var transactions = claims
-                .stream()
-                .map(claim -> CreateTransactionRequestTransaction
-                        .builder()
-                        .debitAccountName("life-insurance")
-                        .creditAccountName(claim.getDeceased().toString())
-                        .amount(calculatePayout())
-                        .debitRef("Life insurance pay out for death of " + claim.getDeceased())
-                        .creditRef("Claim for " + claim.getDeceased() + " paid to " + claim.getNextOfKin())
-                        .build()
-                )
-                .toList();
-
+    public Result<CreateTransactionResponse> createTransactions(List<CreateTransactionRequestTransaction> transactions) {
         return communicationLayer
                 .getCommercialBankAPI()
                 .createTransactions(new CreateTransactionRequest(transactions));
-    }
-
-    private Long calculatePayout() {
-        Price currentPremium = priceRepository.findFirstByOrderByInceptionDateDesc();
-        return currentPremium.getPrice() * 30;
     }
 
 

@@ -9,6 +9,8 @@ backend_certificate = "d1865b28-a928-479b-abed-882f0c53a041"
 
 frontend_certificate = "5ee45d38-ba76-4c13-a91f-614d4d872345"
 
+backend_frontend_certificate = "552a3b30-78d0-4436-a9d0-93ba831c9ee9"
+
 repo = "bbd-miniconomy-life-insurance/life-insurance"
 
 region = "eu-west-1"

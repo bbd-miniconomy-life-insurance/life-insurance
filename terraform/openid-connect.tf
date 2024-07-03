@@ -36,6 +36,24 @@ resource "aws_iam_role" "github_action_role" {
   tags = var.mandatory_tags
 }
 
+resource "aws_iam_role_policy" "github_action_role_policy" {
+  name   = "GitHubActionRolePolicy"
+  role   = aws_iam_role.github_action_role.id
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "apigateway:POST",
+          "apigateway:GET"
+        ],
+        "Resource": "*"
+      }
+    ]
+  })
+}
+
 # Attach policies to the IAM Role
 resource "aws_iam_role_policy_attachment" "github_action_role_attachment" {
   role       = aws_iam_role.github_action_role.name
@@ -70,4 +88,9 @@ resource "aws_iam_role_policy_attachment" "github_action_role_attachment_eb" {
 resource "aws_iam_role_policy_attachment" "github_action_role_attachment_c" {
   role       = aws_iam_role.github_action_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
+}
+
+resource "aws_iam_role_policy_attachment" "github_action_role_attachment_gateway" {
+  role       = aws_iam_role.github_action_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonAPIGatewayAdministrator"
 }

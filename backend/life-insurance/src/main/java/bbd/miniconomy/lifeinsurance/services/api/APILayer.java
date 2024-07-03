@@ -1,31 +1,27 @@
 package bbd.miniconomy.lifeinsurance.services.api;
 
-import bbd.miniconomy.lifeinsurance.services.api.commercialbank.CommercialBankAPI;
-import bbd.miniconomy.lifeinsurance.services.api.retailbank.RetailBankAPI;
-import bbd.miniconomy.lifeinsurance.services.api.revenue.RevenueAPI;
-import bbd.miniconomy.lifeinsurance.services.api.stockexchange.StockExchangeAPI;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import bbd.miniconomy.lifeinsurance.services.api.commercialbank.CommercialBankAPI;
+import bbd.miniconomy.lifeinsurance.services.api.handofzeus.HandOfZeusAPI;
+import bbd.miniconomy.lifeinsurance.services.api.revenue.RevenueAPI;
+import lombok.Getter;
 
 @Component
 @Getter
 public class APILayer {
     private final CommercialBankAPI commercialBankAPI;
-    private final RetailBankAPI retailBankAPI;
     private final RevenueAPI revenueAPI;
-    private final StockExchangeAPI stockExchangeAPI;
+    private final HandOfZeusAPI handOfZeusAPI;
 
     APILayer(
             CommercialBankAPI commercialBankAPI,
-            RetailBankAPI retailBankAPI,
             RevenueAPI revenueAPI,
-            StockExchangeAPI stockExchangeAPI
+            HandOfZeusAPI handOfZeusAPI
     ) {
         this.commercialBankAPI = commercialBankAPI;
-        this.retailBankAPI = retailBankAPI;
         this.revenueAPI = revenueAPI;
-        this.stockExchangeAPI = stockExchangeAPI;
+        this.handOfZeusAPI = handOfZeusAPI;
     }
 
 }
