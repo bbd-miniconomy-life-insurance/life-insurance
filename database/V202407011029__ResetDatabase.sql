@@ -25,6 +25,15 @@ BEGIN
         UPDATE "debit_order" SET debit_order_id = DEFAULT;
         UPDATE "transaction" SET transaction_id = DEFAULT;
         UPDATE "price" SET price_id = DEFAULT;
+
+        INSERT INTO "policy_status" ("status_name") VALUES
+            ('Active'),
+            ('PaidOut'),
+            ('Pending'),
+            ('Unknown'),
+            ('Lapsed');
+
+
     EXCEPTION
         WHEN others THEN
             success := false;  -- Set success to false on any error

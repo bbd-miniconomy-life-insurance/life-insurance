@@ -71,16 +71,14 @@ public class PolicyService {
                 );
     }
 
-    // TODO: new function that will call zeus for price
     public void setPolicyPrice() {
-        // Result<GetPriceResponseData> getPriceResponseResult = commercialBankService.createDebitOrder(activePersonaIds);
         Result<GetPriceResponse> getPriceResponseResult = handOfZeusService.getPriceOfLifeInsurance();
 
         if (getPriceResponseResult.isFailure()) {
             return;
         }
 
-        long latestPrice = priceRepository.findFirstByOrderByInceptionDateDesc().getPrice();
+        long latestPrice = priceRepository.findTopByOrderByIdDesc().getPrice();
         long zeusPrice = getPriceResponseResult.getValue().getPrice();
 
         if (latestPrice == zeusPrice) {

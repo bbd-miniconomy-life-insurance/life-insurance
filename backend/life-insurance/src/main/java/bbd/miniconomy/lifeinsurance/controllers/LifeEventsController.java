@@ -31,7 +31,6 @@ public class LifeEventsController {
         executor.submit(() -> claimsService.payClaims(lifeEvents.getDeaths()));
         executor.submit(() -> policyService.activatePolicy(lifeEvents.getAdults()));
 
-        // returns immediately
         return GlobalLifeInsuranceResponse.builder()
                 .status(HttpStatus.ACCEPTED.value())
                 .message("Message received. Processing...")

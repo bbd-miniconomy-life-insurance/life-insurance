@@ -5,9 +5,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +14,8 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Table(name = "transaction_history")
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_history_id_gen")

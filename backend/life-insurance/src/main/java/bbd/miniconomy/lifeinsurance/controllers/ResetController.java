@@ -2,14 +2,11 @@ package bbd.miniconomy.lifeinsurance.controllers;
 
 import bbd.miniconomy.lifeinsurance.models.dto.GlobalLifeInsuranceResponse;
 import bbd.miniconomy.lifeinsurance.models.dto.reset.ResetDTO;
-import bbd.miniconomy.lifeinsurance.models.entities.Price;
-import bbd.miniconomy.lifeinsurance.repositories.PriceRepository;
-import bbd.miniconomy.lifeinsurance.repositories.ResetRepository;
-import bbd.miniconomy.lifeinsurance.services.PolicyService;
-import bbd.miniconomy.lifeinsurance.services.RevenueService;
-import bbd.miniconomy.lifeinsurance.services.TimeService;
+import bbd.miniconomy.lifeinsurance.services.ResetService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,61 +14,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/control-simulation")
+@Slf4j
 public class ResetController {
 
-    private final ResetRepository resetRepository;
-    private final PolicyService policyService;
-    private final PriceRepository priceRepository;
-    private final TimeService timeService;
-    private final RevenueService revenueService;
+    private final ThreadPoolTaskExecutor executor;
+    private final ResetService resetService;
 
-    public ResetController(ResetRepository resetRepository, PolicyService policyService, PriceRepository priceRepository, TimeService timeService, RevenueService revenueService) {
-        this.resetRepository = resetRepository;
-        this.policyService = policyService;
-        this.priceRepository = priceRepository;
-        this.timeService = timeService;
-        this.revenueService = revenueService;
+    public ResetController(ThreadPoolTaskExecutor executor, ResetService resetService) {
+        this.executor = executor;
+        this.resetService = resetService;
     }
 
     @PostMapping
     public ResponseEntity<GlobalLifeInsuranceResponse> ResetLifeInsuranceService(@RequestBody ResetDTO request) {
-        // reset dbs
-        boolean success = resetRepository.resetDatabase();
+        log.info("Request received: {}", request);
 
-        if (!success) {
-            return new ResponseEntity<>(
-                    GlobalLifeInsuranceResponse
-                            .builder()
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                            .message("Life Insurance Successfully Reset")
-                            .build(),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
-
-        // set time
-        timeService.setStartTime(request.getStartTime());
-
-        // add 0 to price table
-        Price price = new Price();
-        price.setPrice(0L);
-        price.setInceptionDate(timeService.getGameTime());
-        priceRepository.save(price);
-
-        // get premium price from zeus
-        policyService.setPolicyPrice();
-
-        // get tax id from SARS
-        // TODO - wrap in Result and if failure, it should return a response
-        revenueService.registerTax();
+        executor.submit(() -> resetService.resetSystem(request));
 
         return new ResponseEntity<>(
                 GlobalLifeInsuranceResponse
                         .builder()
-                        .status(HttpStatus.OK.value())
+                        .status(HttpStatus.ACCEPTED.value())
                         .message("Life Insurance Successfully Reset")
                         .build(),
-                HttpStatus.OK
+                HttpStatus.ACCEPTED
         );
     }
 }

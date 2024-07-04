@@ -104,7 +104,7 @@ public class ClaimsService {
     }
 
     private Long calculatePayout() {
-        Price currentPremium = priceRepository.findFirstByOrderByInceptionDateDesc();
+        Price currentPremium = priceRepository.findTopByOrderByIdDesc();
         return currentPremium.getPrice() * 30;
     }
 }

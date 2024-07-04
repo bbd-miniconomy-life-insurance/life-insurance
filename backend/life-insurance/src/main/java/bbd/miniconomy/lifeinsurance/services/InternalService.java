@@ -112,7 +112,7 @@ public class InternalService {
 
     private Long EstimatedMonthlyIncome(){
         Long activatePoliciesCount = policyRepository.countByStatus_StatusName("Active");
-        Long currentPremiumPrice = priceRepository.findFirstByOrderByInceptionDateDesc().getPrice();
+        Long currentPremiumPrice = priceRepository.findTopByOrderByIdDesc().getPrice();
         
         Long moneyIn = activatePoliciesCount * currentPremiumPrice;
         Long moneyOut = activatePoliciesCount * currentPremiumPrice * 30 * probabilityOfDeathInMonth;

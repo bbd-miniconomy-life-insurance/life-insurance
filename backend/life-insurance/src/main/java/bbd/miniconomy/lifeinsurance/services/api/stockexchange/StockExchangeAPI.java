@@ -46,8 +46,6 @@ public class StockExchangeAPI {
                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                 .block();
         } catch (Exception e) {
-            // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
-            e.printStackTrace();
             return;
         }
     }
@@ -70,8 +68,6 @@ public class StockExchangeAPI {
                             .block()
             );
         } catch (Exception e) {
-            // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
-            e.printStackTrace();
             return Result.failure("Communication With Stock Exchange Failed");
         }
     }
@@ -93,8 +89,6 @@ public class StockExchangeAPI {
                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                 .block();
         } catch (Exception e) {
-            // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
-            e.printStackTrace();
             return;
         }
     }
@@ -116,8 +110,6 @@ public class StockExchangeAPI {
                             .block()
             );
         } catch (Exception e) {
-            // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
-            e.printStackTrace();
             return Result.failure("Communication With Stock Exchange Failed");
         }
     }
@@ -139,8 +131,6 @@ public class StockExchangeAPI {
                             .block()
             );
         } catch (Exception e) {
-            // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
-            e.printStackTrace();
             return Result.failure("Communication With Stock Exchange Failed");
         }
     }
@@ -163,8 +153,6 @@ public class StockExchangeAPI {
                             .block()
             );
         } catch (Exception e) {
-            // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
-            e.printStackTrace();
             return Result.failure("Communication With Stock Exchange Failed");
         }
     }

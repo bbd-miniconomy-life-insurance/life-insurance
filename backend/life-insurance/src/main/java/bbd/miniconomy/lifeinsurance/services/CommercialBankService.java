@@ -34,7 +34,7 @@ public class CommercialBankService {
 
 
     public Result<DebitOrderResponseTemplate> createDebitOrder(List<Long> personaIds) {
-        Long currentPremiumPrice = priceRepository.findFirstByOrderByInceptionDateDesc().getPrice();
+        Long currentPremiumPrice = priceRepository.findTopByOrderByIdDesc().getPrice();
 
         // build request
         var debitOrderRequests = personaIds

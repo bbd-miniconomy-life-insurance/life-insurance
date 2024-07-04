@@ -1,7 +1,10 @@
 package bbd.miniconomy.lifeinsurance.services;
 
+import bbd.miniconomy.lifeinsurance.models.Result;
 import bbd.miniconomy.lifeinsurance.models.entities.Constant;
 import bbd.miniconomy.lifeinsurance.repositories.ConstantsRepository;
+import bbd.miniconomy.lifeinsurance.services.api.revenue.models.CalculateRevenueResponse;
+import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -16,20 +19,28 @@ public class TimeService {
     private final RevenueService revenueService;
     private final StockExchangeService stockExchangeService;
     private final InternalService internalService;
+    private final HandOfZeusService handOfZeusService;
 
-    public TimeService(ConstantsRepository constantsRepository, RevenueService revenueService, StockExchangeService stockExchangeService, InternalService internalService) {
+    public TimeService(ConstantsRepository constantsRepository, RevenueService revenueService, StockExchangeService stockExchangeService, InternalService internalService, HandOfZeusService handOfZeusService) {
         this.constantsRepository = constantsRepository;
         this.revenueService = revenueService;
         this.stockExchangeService = stockExchangeService;
         this.internalService = internalService;
+        this.handOfZeusService = handOfZeusService;
     }
 
     public LocalDateTime getGameTime() {
         Constant startTimeString = constantsRepository.findByName("startDate");
 
         if (startTimeString == null) {
-            // we no have time.
-            setStartTime(LocalDateTime.now());
+            Result<LocalDateTime> result = handOfZeusService.getStartTime();
+
+            if (result.isFailure()) {
+                setStartTime(LocalDateTime.now());
+                return getGameTime();
+            }
+
+            setStartTime(result.getValue());
             return getGameTime();
         }
 
@@ -70,8 +81,11 @@ public class TimeService {
     @Scheduled(fixedRate = 1000 * 60 * 2 * 30)
     public void runMonthlyTasks() {
         // tax
-        Double taxAmount = revenueService.calculateTax(getMonthStart(), getMonthEnd()).getValue().getTaxAmount();
-        revenueService.payTax(taxAmount.longValue());
+        Result<CalculateRevenueResponse> taxAmountResult = revenueService.calculateTax(getMonthStart(), getMonthEnd());
+
+        if (taxAmountResult.isSuccess()) {
+            revenueService.payTax((long) (taxAmountResult.getValue().getTaxAmount() * 1024));
+        }
 
         // dividends
         stockExchangeService.Dividence(getMonthStart(), getMonthEnd());

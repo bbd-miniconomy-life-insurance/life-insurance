@@ -3,15 +3,15 @@ package bbd.miniconomy.lifeinsurance.models.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @Builder
 @Table(name = "stocks")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "stocks_id_gen")

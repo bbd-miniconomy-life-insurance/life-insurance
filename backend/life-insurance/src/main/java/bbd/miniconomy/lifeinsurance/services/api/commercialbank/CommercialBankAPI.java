@@ -41,8 +41,6 @@ public class CommercialBankAPI {
                             .block()
             );
         } catch (Exception e) {
-            // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
-            e.printStackTrace();
             return Result.failure("Communication With Commercial Bank Failed");
         }
     }
@@ -65,8 +63,6 @@ public class CommercialBankAPI {
                              .block()
              );
          } catch (Exception e) {
-             // TODO: Fix to use statusCode in WebClient and some retries in certain cases.
-             e.printStackTrace();
              return Result.failure("Communication With Commercial Bank Failed");
          }
      }
@@ -87,7 +83,6 @@ public class CommercialBankAPI {
                             .block()
             );
         } catch (Exception e) {
-            e.printStackTrace();
             return Result.failure("Communication With Commercial Bank Failed");
         }
     }

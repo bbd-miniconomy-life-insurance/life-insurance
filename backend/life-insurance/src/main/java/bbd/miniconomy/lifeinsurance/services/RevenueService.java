@@ -33,13 +33,13 @@ public class RevenueService {
 
     public void registerTax(){
         var createRevenueRequest = CreateRevenueRequest
-        .builder()
-        .businessName("life-insurance")
-        .build();
+            .builder()
+            .businessName("life-insurance")
+            .build();
 
         var result = communicationLayer
-        .getRevenueAPI()
-        .registerTax(createRevenueRequest);
+            .getRevenueAPI()
+            .registerTax(createRevenueRequest);
 
         if (result.isFailure())
         {
@@ -56,19 +56,18 @@ public class RevenueService {
         constantsRepository.save(constant);
     }
 
-    //@Scheduled(fixedRate = 1000 * 60 * 2 * 30)
     public Result<CalculateRevenueResponse> calculateTax(LocalDateTime startMonth, LocalDateTime endMonth){
 
         var calculateRevenueRequest = CalculateRevenueRequest
-        .builder()
-        // .amount(transactionHistoryRepository.findSumOfTransactionsFromLastMonth(null, null))
-        .amount(0.0)
-        .taxType("INCOME")
-        .build();
+            .builder()
+            // .amount(transactionHistoryRepository.findSumOfTransactionsFromLastMonth(null, null))
+            .amount(0.0)
+            .taxType("INCOME")
+            .build();
 
         return communicationLayer
-        .getRevenueAPI()
-        .calculateTax(calculateRevenueRequest);
+            .getRevenueAPI()
+            .calculateTax(calculateRevenueRequest);
 
         // TODO pay tax.
     }
