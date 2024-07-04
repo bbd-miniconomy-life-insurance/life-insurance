@@ -1,11 +1,8 @@
 name: Migrate Database
 on:
-#  push:
-#    branches:
-#      - 'main'
-#      - 'deployments'
-#    paths:
-#      - 'database/**'
+  push:
+    branches:
+      - 'main'
   workflow_dispatch:
 
 jobs:

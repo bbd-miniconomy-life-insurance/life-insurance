@@ -1,12 +1,9 @@
 name: Deploy API and UI
 
 on:
-#  push:
-#    branches:
-#      - 'main'
-#      - 'deployments'
-#    paths:
-#      - 'database/**'
+  push:
+    branches:
+      - 'main'
   workflow_dispatch:
 
 permissions:
@@ -95,74 +92,74 @@ jobs:
           version_label="app-$(date +'%Y%m%d%H%M%S')"
           aws elasticbeanstalk create-application-version --application-name life-insurance-web-app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-api-${{ github.run_id }}.jar"
           aws elasticbeanstalk update-environment --application-name life-insurance-web-app --environment-name life-insurance-web-env  --region eu-west-1 --version-label "$version_label"
-#
-#  frontend:
-#    name: Deploy Frontend
-#    runs-on: ubuntu-latest
-#    needs: terraform
-#    steps:
-#      - name: Checkout Repo
-#        uses: actions/checkout@v3
-#
-#      - name: Configure AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v1.7.0
-#        with:
-#          role-to-assume: ${{ secrets.AWS_ROLE }}
-#          role-session-name: GITHUB_ACTION_EBS
-#          aws-region: ${{ secrets.AWS_REGION }}
-#
-#      - name: Package artifact
-#        run: zip -r life-insurance-ui.zip *
-#        working-directory: frontend/dashboard
-#
-#      - name: Upload artifact to S3
-#        run: aws s3 cp life-insurance-ui.zip s3://life-insurance-docker-image-1475/life-insurance-ui-${{ github.run_id }}.zip
-#        working-directory: frontend/dashboard
-#
-#      - name: Deploy APP
-#        run: |
-#          version_label="app-$(date +'%Y%m%d%H%M%S')"
-#          aws elasticbeanstalk create-application-version --application-name life-insurance-ui-app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-ui-${{ github.run_id }}.zip"
-#          aws elasticbeanstalk update-environment --application-name life-insurance-ui-app --environment-name life-insurance-ui-env  --region eu-west-1 --version-label "$version_label"
-#
-#      - name: Deploy APP
-#        run: |
-#          version_label="app-$(date +'%Y%m%d%H%M%S')"
-#          aws elasticbeanstalk create-application-version --application-name life-insurance-ui-app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-ui-${{ github.run_id }}.zip"
-#          aws elasticbeanstalk update-environment --application-name life-insurance-ui-app --environment-name life-insurance-ui-env  --region eu-west-1 --version-label "$version_label"
 
-#  backend-frontend:
-#    name: Deploy backend-frontend API
-#    runs-on: ubuntu-latest
-#    needs: terraform
-#    steps:
-#      - name: Git checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Configure AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v2
-#        with:
-#          role-to-assume: ${{ secrets.AWS_ROLE }}
-#          role-session-name: deploy-backend-session
-#          aws-region: ${{secrets.AWS_REGION}}
-#
-#      - name: Setup JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: 'corretto'
-#          java-version: 21
-#
-#      - name: Package Jar
-#        working-directory: ./backend/FE.life-insurance
-#        run: mvn -B package --file pom.xml -DskipTests
-#
-#      - name: Upload artifact to S3
-#        working-directory: ./backend/FE.life-insurance/target
-#        run: aws s3 cp life-insurance-0.0.1-SNAPSHOT.jar s3://life-insurance-docker-image-1475/life-insurance-frontend-api-${{ github.run_id }}.jar
-#
-#      - name: Deploy API
-#        working-directory: ./backend/FE.life-insurance/target
-#        run: |
-#          version_label="app-$(date +'%Y%m%d%H%M%S')"
-#          aws elasticbeanstalk create-application-version --application-name life-insurance-frontend-api-app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-frontend-api-${{ github.run_id }}.jar"
-#          aws elasticbeanstalk update-environment --application-name life-insurance-frontend-api-app --environment-name life-insurance-frontend-api-env  --region eu-west-1 --version-label "$version_label"
+  frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: terraform
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GITHUB_ACTION_EBS
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Package artifact
+        run: zip -r life-insurance-ui.zip *
+        working-directory: frontend/dashboard
+
+      - name: Upload artifact to S3
+        run: aws s3 cp life-insurance-ui.zip s3://life-insurance-docker-image-1475/life-insurance-ui-${{ github.run_id }}.zip
+        working-directory: frontend/dashboard
+
+      - name: Deploy APP
+        run: |
+          version_label="app-$(date +'%Y%m%d%H%M%S')"
+          aws elasticbeanstalk create-application-version --application-name life-insurance-ui-app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-ui-${{ github.run_id }}.zip"
+          aws elasticbeanstalk update-environment --application-name life-insurance-ui-app --environment-name life-insurance-ui-env  --region eu-west-1 --version-label "$version_label"
+
+      - name: Deploy APP
+        run: |
+          version_label="app-$(date +'%Y%m%d%H%M%S')"
+          aws elasticbeanstalk create-application-version --application-name life-insurance-ui-app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-ui-${{ github.run_id }}.zip"
+          aws elasticbeanstalk update-environment --application-name life-insurance-ui-app --environment-name life-insurance-ui-env  --region eu-west-1 --version-label "$version_label"
+
+  backend-frontend:
+    name: Deploy backend-frontend API
+    runs-on: ubuntu-latest
+    needs: terraform
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: deploy-backend-session
+          aws-region: ${{secrets.AWS_REGION}}
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: 21
+
+      - name: Package Jar
+        working-directory: ./backend/FE.life-insurance
+        run: mvn -B package --file pom.xml -DskipTests
+
+      - name: Upload artifact to S3
+        working-directory: ./backend/FE.life-insurance/target
+        run: aws s3 cp life-insurance-0.0.1-SNAPSHOT.jar s3://life-insurance-docker-image-1475/life-insurance-frontend-api-${{ github.run_id }}.jar
+
+      - name: Deploy API
+        working-directory: ./backend/FE.life-insurance/target
+        run: |
+          version_label="app-$(date +'%Y%m%d%H%M%S')"
+          aws elasticbeanstalk create-application-version --application-name life-insurance-frontend-api-app --version-label "$version_label" --region eu-west-1 --source-bundle S3Bucket="life-insurance-docker-image-1475",S3Key="life-insurance-frontend-api-${{ github.run_id }}.jar"
+          aws elasticbeanstalk update-environment --application-name life-insurance-frontend-api-app --environment-name life-insurance-frontend-api-env  --region eu-west-1 --version-label "$version_label"
