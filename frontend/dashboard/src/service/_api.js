@@ -1,4 +1,4 @@
-const BASE = 'http://localhost:5000';
+const BASE = 'http://api.frontend.life.projects.bbdgrad.com';
 export const makeGetRequest = async (path,globalState, setGlobalState) => {
     try {
         const response = await fetch(`${BASE}/api/v1/${path}`, {
@@ -20,7 +20,7 @@ export const makeGetRequest = async (path,globalState, setGlobalState) => {
 
                 localStorage.removeItem('id_token');
                 localStorage.removeItem('access_token');
-                window.location.pathname = ''; // Update to your login or home path
+                window.location.pathname = '';
             }
             throw new Error(`HTTP error! Status: ${response.status}`);
         }

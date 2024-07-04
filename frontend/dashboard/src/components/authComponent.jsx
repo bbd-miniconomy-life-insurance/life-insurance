@@ -7,7 +7,7 @@ const AuthComponent = () => {
 
   const handleSignIn = async () => {
     try {
-      const cognitoSignInUrl = `https://life-insurance.auth.eu-west-1.amazoncognito.com/login?response_type=token&client_id=3b1g20lnbk4h35i28r54j07qsl&redirect_uri=http://localhost:3000/auth`;
+      const cognitoSignInUrl = `https://life-insurance.auth.eu-west-1.amazoncognito.com/login?response_type=token&client_id=3b1g20lnbk4h35i28r54j07qsl&redirect_uri=https://life.projects.bbdgrad.com/auth`;
 
 
       window.location.href = cognitoSignInUrl;
