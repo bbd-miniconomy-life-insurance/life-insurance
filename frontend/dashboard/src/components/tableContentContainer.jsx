@@ -63,7 +63,7 @@ export default function TableContentContainer() {
                             />
                         ))
                     ) : (
-                        <h3>Loading data...</h3>
+                        <h3>No data...</h3>
                     )}
                 </div>
             </div>
@@ -89,7 +89,7 @@ export default function TableContentContainer() {
                             />
                         ))
                     ) : (
-                        <h3>Loading data...</h3>
+                        <h3>No data...</h3>
                     )}
                 </div>
             </div>
