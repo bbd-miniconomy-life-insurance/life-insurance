@@ -1,4 +1,4 @@
-const BASE = 'http://api.frontend.life.projects.bbdgrad.com';
+const BASE = 'https://api.frontend.life.projects.bbdgrad.com';
 export const makeGetRequest = async (path,globalState, setGlobalState) => {
     try {
         const response = await fetch(`${BASE}/api/v1/${path}`, {
