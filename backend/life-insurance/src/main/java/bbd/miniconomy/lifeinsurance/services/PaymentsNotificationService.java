@@ -31,7 +31,7 @@ public class PaymentsNotificationService {
     public void handleOutgoingPayments(PaymentNotificationDTO notification) {
         var transactionHistory = TransactionHistory
             .builder()
-            .amount(notification.getTransaction().getAmount())
+            .amount(notification.getTransaction().getAmount() * -1)
             .reference(notification.getTransaction().getReference())
             .date(timeService.getGameTime())
             .build();

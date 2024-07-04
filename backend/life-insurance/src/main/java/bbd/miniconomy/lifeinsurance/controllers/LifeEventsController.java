@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/dailyUpdate")
+@RequestMapping("/dailyupdate")
 public class LifeEventsController {
 
     private final ClaimsService claimsService;
