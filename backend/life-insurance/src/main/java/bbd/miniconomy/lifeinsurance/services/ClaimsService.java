@@ -53,7 +53,7 @@ public class ClaimsService {
                 .stream()
                 .map(claim -> CreateTransactionRequestTransaction
                         .builder()
-                        .debitAccountName("life-insurance")
+                        .debitAccountName("life_insurance")
                         .creditAccountName(claim.getDeceased().toString())
                         .amount(calculatePayout())
                         .debitRef("Life insurance pay out for death of " + claim.getDeceased())

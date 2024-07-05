@@ -9,10 +9,5 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface DebitOrderRepository extends JpaRepository<DebitOrder, Integer> {
-    @Modifying
-    @Transactional
-    @Query(value = "CALL insert_debit_order(:personaId, :debitOrderReference)", nativeQuery = true)
-    void insertDebitOrder(@Param("personaId") Long personaId, @Param("debitOrderReference") String debitOrderReference);
-
     DebitOrder findByPolicy(Policy policy);
 }

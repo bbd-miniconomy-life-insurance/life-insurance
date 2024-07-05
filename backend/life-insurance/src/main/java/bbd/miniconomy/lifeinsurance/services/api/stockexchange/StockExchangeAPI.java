@@ -27,6 +27,7 @@ public class StockExchangeAPI {
     static final WebClient client = WebClient
             .builder()
             .baseUrl("https://mese.projects.bbdgrad.com")
+            .defaultHeader("Authorization", "Bearer MY_SECRET_TOKEN")
             .build();
 
     public void registerBusiness(CreateBusinessRequest requests) {

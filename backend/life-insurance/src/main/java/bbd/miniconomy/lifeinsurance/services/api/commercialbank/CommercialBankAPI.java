@@ -21,6 +21,7 @@ public class CommercialBankAPI {
     static final WebClient client = WebClient
             .builder()
             .baseUrl("https://api.commercialbank.projects.bbdgrad.com")
+            .defaultHeader("X-origin", "life_insurance")
             .build();
 
     public Result<CreateTransactionResponse> createTransactions(CreateTransactionRequest requests) {
@@ -41,6 +42,7 @@ public class CommercialBankAPI {
                             .block()
             );
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.failure("Communication With Commercial Bank Failed");
         }
     }
@@ -63,6 +65,7 @@ public class CommercialBankAPI {
                              .block()
              );
          } catch (Exception e) {
+             e.printStackTrace();
              return Result.failure("Communication With Commercial Bank Failed");
          }
      }
@@ -83,6 +86,7 @@ public class CommercialBankAPI {
                             .block()
             );
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.failure("Communication With Commercial Bank Failed");
         }
     }

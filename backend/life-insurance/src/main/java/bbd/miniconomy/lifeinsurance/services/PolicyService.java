@@ -65,9 +65,13 @@ public class PolicyService {
                 .getValue()
                 .getData()
                 .getItems()
-                .forEach(
-                    response -> debitOrderRepository
-                            .insertDebitOrder(Long.valueOf(response.getCreditAccountName()), response.getId())
+                .forEach((response) -> {
+                            Policy policy = policyRepository.findByPersonaId(Long.valueOf(response.getCreditAccountName()));
+                            DebitOrder debit = new DebitOrder();
+                            debit.setPolicy(policy);
+                            debit.setDebitOrderReferenceNumber(response.getId());
+                            debitOrderRepository.save(debit);
+                        }
                 );
     }
 

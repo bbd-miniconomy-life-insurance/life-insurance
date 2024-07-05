@@ -22,7 +22,7 @@ public class RevenueAPI {
     static final WebClient client = WebClient
             .builder()
             .baseUrl("https://api.mers.projects.bbdgrad.com")
-            .defaultHeader("Authorization", "Bearer MY_SECRET_TOKEN")
+            .defaultHeader("X-origin", "life_insurance")
             .build();
     private static final Logger log = LoggerFactory.getLogger(RevenueAPI.class);
 

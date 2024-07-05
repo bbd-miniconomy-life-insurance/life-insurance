@@ -34,7 +34,7 @@ public class RevenueService {
     public void registerTax(){
         var createRevenueRequest = CreateRevenueRequest
             .builder()
-            .businessName("life-insurance")
+            .businessName("life_insurance")
             .build();
 
         var result = communicationLayer
@@ -75,8 +75,8 @@ public class RevenueService {
     public void payTax(long amount) {
         var validTransactions = List.of(CreateTransactionRequestTransaction
                     .builder()
-                    .debitAccountName("SARS") // TODO: replace with real name
-                    .creditAccountName("life-insurance")
+                    .debitAccountName("central_revenue") // TODO: replace with real name
+                    .creditAccountName("life_insurance")
                     .amount(amount)
                     .debitRef("Life Insurance paid tax")
                     .creditRef("Paid tax")

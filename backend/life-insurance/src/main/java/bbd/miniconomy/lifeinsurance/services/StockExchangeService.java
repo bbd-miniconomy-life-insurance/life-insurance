@@ -39,7 +39,7 @@ public class StockExchangeService {
         var createBusinessRequest = CreateBusinessRequest
         .builder()
         .name("LifeInsurance")
-        .bankAccount("life-insurance")
+        .bankAccount("life_insurance")
         .build();
 
         communicationLayer
@@ -126,8 +126,8 @@ public class StockExchangeService {
 
         var validTransactions = List.of(CreateTransactionRequestTransaction
             .builder()
-            .debitAccountName("stock-exchange")
-            .creditAccountName("life-insurance")
+            .debitAccountName("stock_exchange")
+            .creditAccountName("life_insurance")
             .amount(amount)
             .debitRef(dividendsResponse.getValue().getReferenceId())
             .creditRef("Bought Stocks")
