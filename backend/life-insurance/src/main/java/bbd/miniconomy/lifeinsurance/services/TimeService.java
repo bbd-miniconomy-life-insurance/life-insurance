@@ -75,6 +75,10 @@ public class TimeService {
         var month = (long) Math.floor(((double) daysIntoYear / 30) + 1);
         var day = (daysIntoYear % 30);
 
+        if (month == 2 && day > 28 ) {
+            day = 28;
+        }
+
         return LocalDateTime.of((int) year, (int) month, (int) day, 0, 0);
     }
 
@@ -102,6 +106,6 @@ public class TimeService {
 
     public LocalDateTime getMonthEnd() {
         LocalDateTime currentTime = getGameTime();
-        return LocalDateTime.of(currentTime.getYear(), currentTime.getMonthValue(), 30, 0, 0);
+        return LocalDateTime.of(currentTime.getYear(), currentTime.getMonthValue(), 28, 0, 0);
     }
 }
