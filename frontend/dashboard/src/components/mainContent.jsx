@@ -7,12 +7,7 @@ import TableContentContainer from './tableContentContainer';
 
 export default function MainContent({ selectedTable, setSelectedTable,authenticated }) {
     const { globalState, setGlobalState } = useGlobalState();
-    const handleNextPage=()=>{
-        setGlobalState(prevState => ({
-            ...prevState,
-            page:prevState.page + 1,
-        }));
-    }
+
     return (
       <div className="main-content">
         <HeaderComponent/>
@@ -20,16 +15,10 @@ export default function MainContent({ selectedTable, setSelectedTable,authentica
           <>
             <TableButtons selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
             <div className='table-title'><h3>{globalState.selectedTable}</h3></div>
-            <TableContentContainer/>
-            <div className='next-container' >
-                {globalState.displayNext?<button className='next-btn' onClick={handleNextPage}>Next page &gt;</button>:''}
-            </div>
-            
+            <TableContentContainer/>            
           </>
         )
         :<AuthComponent/>}
-        
-        
       </div>
     );
 }

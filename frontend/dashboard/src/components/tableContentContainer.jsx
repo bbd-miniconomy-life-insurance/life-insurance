@@ -7,41 +7,39 @@ export default function TableContentContainer() {
   const { globalState, setGlobalState } = useGlobalState();
   const [tableData, setTableData] = useState([]);
 
+  const handleNextPage=()=>{
+    setGlobalState(prevState => ({
+        ...prevState,
+        page:prevState.page + 1,
+    }));
+}
+
   useEffect(() => {
     const fetchTableData = async () => {
       try {
         const data = await getPaginatedData(globalState.selectedTable.toLowerCase(),globalState, setGlobalState);
         setTableData(data);
+
+        const count = await makeGetRequest('counts',globalState, setGlobalState);
         setGlobalState({
           ...globalState,
-          displayNext:data.length>=8
+          policyCount:count.policyCount,
+          transactionCount: count.transactionCount
         });
       } catch (error) {
         console.error('Error fetching policies:', error);
       }
     };
 
-    const fetchStats = async () => {
-      try {
-        const data = await makeGetRequest('counts',globalState, setGlobalState);
-        setGlobalState({
-          ...globalState,
-          policyCount:data.policyCount,
-          transactionCount: data.transactionCount
-        });
-      } catch (error) {
-        console.error('Error fetching policies:', error);
-      }
-    };
 
     if (globalState.isLoggedIn) {
       fetchTableData();
-      fetchStats();
     }
   }, [globalState.isLoggedIn, globalState.selectedTable,globalState.page]);
 
 
   return (
+    <>
     <div className='table-container'>
         {globalState.selectedTable === 'Policies' && (
             <div className='table-header'>
@@ -61,7 +59,9 @@ export default function TableContentContainer() {
                                 col3={row.inceptionDate}
                                 col4={row.status}
                             />
-                        ))
+                        )
+                      
+                      )
                     ) : (
                         <h3>No data...</h3>
                     )}
@@ -95,5 +95,9 @@ export default function TableContentContainer() {
             </div>
         )}
     </div>
+    <div className='next-container' >
+          {tableData.length>=8?<button className='next-btn' onClick={handleNextPage}>Next page &gt;</button>:''}
+    </div>
+    </>
 );
 };
