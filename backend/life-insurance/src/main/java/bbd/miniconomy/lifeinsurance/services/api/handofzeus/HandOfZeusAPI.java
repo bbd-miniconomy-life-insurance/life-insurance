@@ -2,6 +2,7 @@ package bbd.miniconomy.lifeinsurance.services.api.handofzeus;
 
 import bbd.miniconomy.lifeinsurance.services.api.handofzeus.models.gettime.StartTimeResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import bbd.miniconomy.lifeinsurance.models.Result;
@@ -11,7 +12,7 @@ import reactor.util.retry.Retry;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-@Component
+@Service
 public class HandOfZeusAPI {
     static final WebClient client = WebClient
             .builder()

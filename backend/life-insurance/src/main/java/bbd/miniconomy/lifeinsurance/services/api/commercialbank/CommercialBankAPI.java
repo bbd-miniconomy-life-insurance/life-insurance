@@ -9,6 +9,7 @@ import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.debitorde
 import bbd.miniconomy.lifeinsurance.services.api.commercialbank.models.editdebitorder.EditDebitOrderResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.util.retry.Retry;
@@ -16,7 +17,7 @@ import reactor.util.retry.Retry;
 import java.time.Duration;
 
 
-@Component
+@Service
 public class CommercialBankAPI {
     static final WebClient client = WebClient
             .builder()
@@ -26,7 +27,7 @@ public class CommercialBankAPI {
 
     public Result<CreateTransactionResponse> createTransactions(CreateTransactionRequest requests) {
         try {
-            return Result.success(
+           return Result.success(
                     client
                             .post()
                             .uri(uriBuilder -> uriBuilder

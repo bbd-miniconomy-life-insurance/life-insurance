@@ -18,11 +18,12 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.util.retry.Retry;
 
-@Component
+@Service
 public class StockExchangeAPI {
     static final WebClient client = WebClient
             .builder()

@@ -52,8 +52,8 @@ public class StockExchangeController {
     public void buystockcallback(@RequestBody BuyStockResponse buyStockResponse) {
             var validTransactions = List.of(CreateTransactionRequestTransaction
                     .builder()
-                    .debitAccountName("stock_exchange")
-                    .creditAccountName("life_insurance")
+                    .debitAccountName("stock-exchange")
+                    .creditAccountName("life-insurance")
                     .amount(buyStockResponse.getAmountToPay())
                     .debitRef(buyStockResponse.getReferenceId())
                     .creditRef("Bought Stocks")

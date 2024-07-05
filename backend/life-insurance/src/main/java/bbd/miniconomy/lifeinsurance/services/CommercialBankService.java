@@ -41,7 +41,7 @@ public class CommercialBankService {
             .stream()
             .map(personaId -> DebitOrderRequest
                     .builder()
-                    .debitAccountName("life_insurance")
+                    .debitAccountName("life-insurance")
                     .creditAccountName(personaId.toString())
                     .amount(currentPremiumPrice)
                     .debitRef("Life Insurance premium for " + personaId + " activated")
@@ -62,7 +62,7 @@ public class CommercialBankService {
         // create request
         var debitOrderRequests = DebitOrderRequest
                 .builder()
-                .debitAccountName("life_insurance")
+                .debitAccountName("life-insurance")
                 .creditAccountName(String.valueOf(personaId))
                 .amount(amount)
                 .debitRef("Life Insurance premium for " + personaId + " activated")
